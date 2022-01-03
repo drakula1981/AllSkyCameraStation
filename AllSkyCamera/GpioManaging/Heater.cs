@@ -1,0 +1,8 @@
+﻿namespace AllSkyCameraConditionService.GpioManaging {
+   internal class Heater : GpioManager {
+      public bool IsHeating => Status;
+      public Heater(int pinOut) : base(pinOut, GpioMode.Binary) { }
+      public void Heat() => High(20);
+      public void StopHeat() => Low();
+   }
+}
