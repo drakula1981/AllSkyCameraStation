@@ -18,3 +18,15 @@ Deux Drivers ASCOM sont également développés pour des besoins personnels dans
   - Taux de couverture nuageuse
   - Température du ciel
 - ASCOM.HyperRouge.SafetyMonitor est un pilote ASCOM permettant de déterminer, en fonction de la couverture nuageuse, si les conditions sont propices ou non à démarrer une session 
+
+INSTRUCTIONS d'installation sur raspberry Pi :
+ - 1 - Suivre le tutoriel d'installation de la suite Allsky (soft de base + Web gui)
+ - 2 - Installer le runtime .NET 6
+ - 3 - Dezipper l'archive AllSkyCameraConditionService_1.0.zip dans /usr/bin/AllSkyService
+ - 4 - executer les commandes suivantes :
+    - cd /usr/bin/AllSkyService
+    - sudo cp AllSkyConditionsService.service /etc/systemd/system/AllSkyConditionsService.service
+    - sudo systemctl daemon-reload
+    - sudo nano AllSkyCameraConditionService.dll.config (edition de la configuration du service
+    - sudo systemctl start AllSkyConditionsService
+    - sudo systemctl status AllSkyConditionsService
