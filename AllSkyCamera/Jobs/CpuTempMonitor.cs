@@ -22,9 +22,9 @@ namespace AllSkyCameraConditionService.Jobs {
             if (cpuTemperature.IsAvailable) {
                CpuTemperatureDatas current = new(cpuTemperature.ReadTemperatures().First().Temperature.DegreesCelsius, 0);
                DataHisto.Instance.AddCpuTempDatas(current);
-               if (current.HeatingRequired) {
-                  if (null != Fan1 && !Fan1.IsCooling) Fan1.StartFan(50);
-                  if (null != Fan2 && !Fan2.IsCooling) Fan2.StartFan(50);
+               if (current.CoolingRequired) {
+                  if (null != Fan1 && !Fan1.IsCooling) Fan1.StartFan(current.CoolingValue);
+                  if (null != Fan2 && !Fan2.IsCooling) Fan2.StartFan(current.CoolingValue);
                } else {
                   if (null != Fan1 && Fan1.IsCooling) Fan1.StopFan();
                   if (null != Fan2 && Fan2.IsCooling) Fan2.StopFan();

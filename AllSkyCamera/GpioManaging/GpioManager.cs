@@ -30,7 +30,7 @@ namespace AllSkyCameraConditionService.GpioManaging {
             Thread.Sleep(dutyCycle*1000);
             Low();
          } else if(null != Pwm) {
-            Pwm.DutyCycle = dutyCycle / 100;
+            Pwm.DutyCycle = dutyCycle< 0 ? 0 : dutyCycle > 100 ? 1 : dutyCycle / 100;
             Pwm.Start();
          }
       }
