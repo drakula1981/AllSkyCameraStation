@@ -43,6 +43,11 @@ namespace AllSkyCameraConditionService {
                         .RepeatForever())
                      , LogJob => LogJob.WithIdentity("LogHistory", "Log"));
                 });
+                services.AddQuartz(q => {
+                   q.ScheduleJob<ServiceWebServer>(ServiceWebServerTrigger => ServiceWebServerTrigger.WithIdentity("ServiceWebServer", "webTriggers")
+                     .StartNow()
+                     , WebJob => WebJob.WithIdentity("ServiceWebServer", "Web"));
+                });
                 services.AddQuartzHostedService(options => {
                    options.WaitForJobsToComplete = true;
                 });

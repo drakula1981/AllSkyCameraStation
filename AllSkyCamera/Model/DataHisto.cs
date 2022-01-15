@@ -22,6 +22,14 @@ namespace AllSkyCameraConditionService.Model {
       public void AddWeatherDatas(WeatherDatas datas) => WeatherDatasDb.Insert(datas);
       public void AddCloudWatcherDatas(CloudTemperatureDatas datas) => CloudWatchDb.Insert(datas);
       public void AddCpuTempDatas(CpuTemperatureDatas datas) => CpuTempDb.Insert(datas);
+      public CurrentConditions GetCurrentConditions() => new() { Temperature = LastWeatherDatas?.Temperature,
+                                                                 Humidity = LastWeatherDatas?.Humidity,
+                                                                 Pressure = LastWeatherDatas?.Pressure,
+                                                                 DewPoint = LastWeatherDatas?.DewPoint,
+                                                                 MeasureDate = LastWeatherDatas?.MeasureDate,
+                                                                 SkyTemperature = LastCloudWatch?.SkyTemperature,
+                                                                 CloudCoveragePercent = LastCloudWatch?.CloudCoveragePercent,
+                                                                 IsSafe = LastCloudWatch?.IsSafe};
 
       public override string ToString() => JsonConvert.SerializeObject(this);
 

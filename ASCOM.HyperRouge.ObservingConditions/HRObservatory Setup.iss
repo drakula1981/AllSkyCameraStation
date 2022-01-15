@@ -34,12 +34,12 @@ Name: "{cf}\ASCOM\Uninstall\ObservingConditions\HRObservatory"
 ; TODO: Add subfolders below {app} as needed (e.g. Name: "{app}\MyFolder")
 
 [Files]
-Source: "D:\Sources\AllSkyCamera\ASCOM.HyperRouge.ObservingConditions\bin\Release\ASCOM.HyperRouge.ObservingConditions.dll"; DestDir: "{app}"
+Source: "D:\Sources\AllSkyCameraStation\ASCOM.HyperRouge.ObservingConditions\bin\Release\ASCOM.HyperRouge.ObservingConditions.dll"; DestDir: "{app}"
 ; Require a read-me HTML to appear after installation, maybe driver's Help doc
-Source: "D:\Sources\AllSkyCamera\ASCOM.HyperRouge.ObservingConditions\ReadMe.htm"; DestDir: "{app}"; Flags: isreadme
+Source: "D:\Sources\AllSkyCameraStation\ASCOM.HyperRouge.ObservingConditions\ReadMe.htm"; DestDir: "{app}"; Flags: isreadme
 ; TODO: Add other files needed by your driver here (add subfolders above)
-Source: "D:\Sources\AllSkyCamera\ASCOM.HyperRouge.Model\bin\Release\ASCOM.HyperRouge.Model.dll"; DestDir: "{app}"
-Source: "D:\Sources\AllSkyCamera\ASCOM.HyperRouge.Model\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"
+Source: "D:\Sources\AllSkyCameraStation\ASCOM.HyperRouge.Model\bin\Release\ASCOM.HyperRouge.Model.dll"; DestDir: "{app}"
+Source: "D:\Sources\AllSkyCameraStation\ASCOM.HyperRouge.Model\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"
 
 ; Only if driver is .NET
 [Run]
