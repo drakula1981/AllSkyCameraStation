@@ -11,7 +11,7 @@ namespace AllSkyCameraConditionService.GpioManaging {
       private PwmChannel? Pwm { get; set; }
       private int PinOut { get; set; }
       private GpioMode GpioMode { get; set; }
-      protected bool Status => null != Gpio && Gpio.Read(PinOut) == PinValue.High;
+      protected bool Status => GpioMode == GpioMode.Binary ? Gpio?.Read(PinOut) == PinValue.High : Pwm?.DutyCycle > 0;
 
       protected GpioManager(int pinOut, GpioMode gpioMode) {
          PinOut = pinOut;
@@ -20,7 +20,7 @@ namespace AllSkyCameraConditionService.GpioManaging {
             Gpio = new();
             Gpio.OpenPin(PinOut, PinMode.Output);
          } else {
-            Pwm = PwmChannel.Create(1, pinOut, 25, 0);
+            Pwm = PwmChannel.Create(1, pinOut, 400, 0);
          }
       }
 
@@ -45,8 +45,8 @@ namespace AllSkyCameraConditionService.GpioManaging {
 
       public void Dispose(bool disposing) {
          if (!disposing) return;
-         if(null != Gpio) Gpio.Dispose();
-         if(null != Pwm) Pwm.Dispose();
+         Gpio?.Dispose();
+         Pwm?.Dispose();
       }
    }
 }

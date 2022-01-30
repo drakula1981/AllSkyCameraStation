@@ -9,6 +9,7 @@ namespace AllSkyCameraConditionService.Jobs {
          await SaveJsonLog(AppParams.DatasHistoryFilePath);
          await SaveWeatherFile(AppParams.WeatherDatasFilePath);
          await SaveCloudWatchFile(AppParams.CloudWatcherDatasFilePath);
+         await SaveSkyQualityDatasFile(AppParams.SkyQualityDatasFilePath);
       }
 
       private static async Task SaveJsonLog(FileInfo destFile) {
@@ -22,7 +23,7 @@ namespace AllSkyCameraConditionService.Jobs {
             await fs.WriteAsync(buffer);
             fs.Flush();
             fs.Close();
-            sb = sb.Clear().Append($"{{\"LastCloudWatch\":{DataHisto.Instance.LastCloudWatch},\"LastWeatherDatas\":{DataHisto.Instance.LastWeatherDatas}}}");
+            sb = sb.Clear().Append($"{{\"LastCloudWatch\":{DataHisto.Instance.LastCloudWatch},\"LastWeatherDatas\":{DataHisto.Instance.LastWeatherDatas}, \"LastSkyQualityDatas\":{DataHisto.Instance.LastSkyDatas}}}");
             buffer = Encoding.UTF8.GetBytes(sb.ToString());
             var currentInfosJson = new FileInfo($"{destFile.DirectoryName}/current.json");
             if (currentInfosJson.Exists) currentInfosJson.Delete();
@@ -37,6 +38,7 @@ namespace AllSkyCameraConditionService.Jobs {
 
       private static async Task SaveWeatherFile(FileInfo destFile) => await Conditions.ToCsv(destFile);
       private static async Task SaveCloudWatchFile(FileInfo destFile) => await CloudSensor.ToCsv(destFile);
+      private static async Task SaveSkyQualityDatasFile(FileInfo destFile) => await SkyLuminance.ToCsv(destFile);
 
    }
 }

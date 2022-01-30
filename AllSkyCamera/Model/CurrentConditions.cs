@@ -9,6 +9,8 @@ namespace AllSkyCameraConditionService.Model {
       [JsonProperty("Pressure")] public double? Pressure { get; set; }
       [JsonProperty("DewPoint")] public double? DewPoint { get; set; }
       [JsonProperty("SkyTemp")] public double? SkyTemperature { get; set; }
+      [JsonProperty("SkyBrightness")] public double? SkyBrightness { get; set; }
+      [JsonProperty("SkyQuality")] public double? SkyQuality { get; set; }
       [JsonProperty("CloudCover")] public double? CloudCoveragePercent { get; set; }
       [JsonProperty("IsSafe")] public bool? IsSafe { get; set; }
 

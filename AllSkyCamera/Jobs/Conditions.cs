@@ -45,15 +45,15 @@ namespace AllSkyCameraConditionService.Jobs {
             Sensor.SetPowerMode(Bmx280PowerMode.Forced);
             await Task.Delay(MeasurementTime);
             var weatherDatas = await Sensor.ReadAsync();
-            WeatherDatas wd = new(weatherDatas.Temperature.HasValue ? Math.Round(weatherDatas.Temperature.Value.DegreesCelsius, 2) : 0,
+            WeatherDatas wd = new(weatherDatas.Temperature.HasValue ? Math.Round(weatherDatas.Temperature.Value.DegreesCelsius + weatherDatas.Temperature.Value.DegreesCelsius*0.15, 2) : 0,
                                   weatherDatas.Humidity.HasValue ? Math.Round(weatherDatas.Humidity.Value.Percent,1) : 0,
-                                  weatherDatas.Pressure.HasValue ? Math.Floor(weatherDatas.Pressure.Value.Hectopascals) : 0);
+                                  weatherDatas.Pressure.HasValue ? Math.Floor(weatherDatas.Pressure.Value.Hectopascals + weatherDatas.Pressure.Value.Hectopascals*0.017) : 0);
             DataHisto.Instance.AddWeatherDatas(wd);
             if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] {wd}");
             if (null == heater || heater.IsHeating) return;
             if (wd.TempIndex < 3 && wd.Temperature <= maxHeatingTemp) {
                if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] Starting heating...");
-               if (!heater.IsHeating) heater.Heat();
+               if (!heater.IsHeating) heater.Heat(wd.TempIndex > 2 ? 0 : wd.TempIndex < 0 ? 10 : 5);
             } else {
                if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] Heating conditions not reached : TempIndex : {wd.TempIndex} / CurrentTemp : {wd.Temperature} / MaxHeatingTemp : {maxHeatingTemp} ");
                heater.StopHeat();

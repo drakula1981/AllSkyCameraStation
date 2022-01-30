@@ -13,6 +13,7 @@ namespace AllSkyCameraConditionService.Model {
       public static FileInfo WeatherDatasFilePath => new(ConfigurationManager.AppSettings["WeatherDatasPath"] ?? "/datas/wdp.csv");
       public static FileInfo CloudWatcherDatasFilePath => new(ConfigurationManager.AppSettings["CloudWatcherDatasFilePath"] ?? "/datas/cwdfp.csv");
       public static FileInfo DatasHistoryFilePath => new(ConfigurationManager.AppSettings["DatasHistoryFilePath"] ?? "/datas/dh.json");
+      public static FileInfo SkyQualityDatasFilePath => new(ConfigurationManager.AppSettings["SkyQualityDatasFilePath"] ?? "/datas/sqd.json");
       public static string DbConnectionString => ConfigurationManager.AppSettings["DbConnectionString"] ?? "/datas/service.db";
       public static string ApiAccessUrl => ConfigurationManager.AppSettings["ApiAccessUrl"] ?? "http://localhost:4242";
 
