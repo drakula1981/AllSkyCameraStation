@@ -95,6 +95,8 @@ namespace ASCOM.HyperRouge {
       /// </summary>
       internal TraceLogger tl;
 
+      internal CurrentConditions CurrentConditions => CurrentConditions.GetInstance(DatasUrl);
+
       /// <summary>
       /// Initializes a new instance of the <see cref="HyperRouge"/> class.
       /// Must be public for COM registration.
@@ -261,9 +263,9 @@ namespace ASCOM.HyperRouge {
       /// <remarks>0%= clear sky, 100% = 100% cloud coverage</remarks>
       public double CloudCover {
          get {
-            var cloudCover = CurrentConditions.GetInstance(DatasUrl).CloudCoverage;
+            var cloudCover = CurrentConditions.CloudCoverage;
             LogMessage("CloudCover", $"{cloudCover}");
-            return cloudCover;
+            return cloudCover ?? 0;
          }
       }
 
@@ -276,9 +278,9 @@ namespace ASCOM.HyperRouge {
       /// </remarks>
       public double DewPoint {
          get {
-            var dewPoint = CurrentConditions.GetInstance(DatasUrl).DewPoint;
+            var dewPoint = CurrentConditions.DewPoint;
             LogMessage("DewPoint", $"{dewPoint}");
-            return dewPoint;
+            return dewPoint ?? 0;
          }
       }
 
@@ -291,9 +293,9 @@ namespace ASCOM.HyperRouge {
       /// </remarks>
       public double Humidity {
          get {
-            var humidity = CurrentConditions.GetInstance(DatasUrl).Humidity;
+            var humidity = CurrentConditions.Humidity;
             LogMessage("Humidity", $"{humidity}");
-            return humidity;
+            return humidity ?? 0;
          }
       }
 
@@ -307,9 +309,9 @@ namespace ASCOM.HyperRouge {
       /// </remarks>
       public double Pressure {
          get {
-            var pressure = CurrentConditions.GetInstance(DatasUrl).Pressure;
+            var pressure = CurrentConditions.Pressure;
             LogMessage("Pressure", $"{pressure}");
-            return pressure;
+            return pressure ?? 0;
          }
       }
 
@@ -368,17 +370,16 @@ namespace ASCOM.HyperRouge {
                }
 
             case "rainrate": {
-                  return "Rain rate (mm / hour)";
+                  LogMessage("SensorDescription", propertyName + " - not implemented");
+                  throw new MethodNotImplementedException("SensorDescription(" + propertyName + ")");
                }
 
             case "skybrightness": {
-                  LogMessage("SensorDescription", propertyName + " - not implemented");
-                  throw new MethodNotImplementedException("SensorDescription(" + propertyName + ")");
+                  return "Sky Brightness (lux)";
                }
 
             case "skyquality": {
-                  LogMessage("SensorDescription", propertyName + " - not implemented");
-                  throw new MethodNotImplementedException("SensorDescription(" + propertyName + ")");
+                  return "Sky Quality (mag/arcsec²)";
                }
 
             case "starfwhm": {
@@ -418,8 +419,9 @@ namespace ASCOM.HyperRouge {
       /// </summary>
       public double SkyBrightness {
          get {
-            LogMessage("SkyBrightness", "get - not implemented");
-            throw new PropertyNotImplementedException("SkyBrightness", false);
+            var skyBrightness = CurrentConditions.SkyBrightness;
+            LogMessage("SkyBrightness", $"{skyBrightness}");
+            return skyBrightness ?? 0;
          }
       }
 
@@ -428,8 +430,9 @@ namespace ASCOM.HyperRouge {
       /// </summary>
       public double SkyQuality {
          get {
-            LogMessage("SkyQuality", "get - not implemented");
-            throw new PropertyNotImplementedException("SkyQuality", false);
+            var skyQuality = CurrentConditions.SkyQuality;
+            LogMessage("SkyQuality", $"{skyQuality}");
+            return skyQuality ?? 0;
          }
       }
 
@@ -448,9 +451,9 @@ namespace ASCOM.HyperRouge {
       /// </summary>
       public double SkyTemperature {
          get {
-            var skyTemp = CurrentConditions.GetInstance(DatasUrl).SkyTemperature;
+            var skyTemp = CurrentConditions.SkyTemperature;
             LogMessage("SkyTemperature", $"{skyTemp}");
-            return skyTemp;
+            return skyTemp ?? 0;
          }
       }
 
@@ -459,9 +462,9 @@ namespace ASCOM.HyperRouge {
       /// </summary>
       public double Temperature {
          get {
-            var temperature = CurrentConditions.GetInstance(DatasUrl).Temperature;
+            var temperature = CurrentConditions.Temperature;
             LogMessage("Temperature", $"{temperature}");
-            return temperature;
+            return temperature ?? 0;
          }
       }
 
@@ -505,18 +508,18 @@ namespace ASCOM.HyperRouge {
                }
 
             case "rainrate": {
+                  LogMessage("TimeSinceLastUpdate", propertyName + " - not implemented");
+                  throw new MethodNotImplementedException("TimeSinceLastUpdate(" + propertyName + ")");
+               }
+
+            case "skybrightness": {
                   LogMessage("TimeSinceLastUpdate", propertyName + " : " + varTimeSinceLastUpdate.ToString());
                   return varTimeSinceLastUpdate;
                }
 
-            case "skybrightness": {
-                  LogMessage("TimeSinceLastUpdate", propertyName + " - not implemented");
-                  throw new MethodNotImplementedException("TimeSinceLastUpdate(" + propertyName + ")");
-               }
-
             case "skyquality": {
-                  LogMessage("TimeSinceLastUpdate", propertyName + " - not implemented");
-                  throw new MethodNotImplementedException("TimeSinceLastUpdate(" + propertyName + ")");
+                  LogMessage("TimeSinceLastUpdate", propertyName + " : " + varTimeSinceLastUpdate.ToString());
+                  return varTimeSinceLastUpdate;
                }
 
             case "starfwhm": {

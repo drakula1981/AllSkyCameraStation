@@ -1,15 +1,8 @@
 ﻿using AllSkyCameraConditionService.Model;
 using EmbedIO;
 using EmbedIO.Actions;
-using Newtonsoft.Json;
 using Quartz;
 using Serilog;
-using Swan.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AllSkyCameraConditionService.Jobs {
    internal class ServiceWebServer : IJob, IDisposable {
@@ -25,7 +18,7 @@ namespace AllSkyCameraConditionService.Jobs {
                  .WithUrlPrefix(url)
                  .WithMode(HttpListenerMode.EmbedIO))
              .WithLocalSessionManager()
-             .WithModule(new ActionModule("/", HttpVerbs.Any, ctx => ctx.SendDataAsync(new { CurrentConditions = DataHisto.Instance.GetCurrentConditions() })));
+             .WithModule(new ActionModule("/", HttpVerbs.Any, ctx => ctx.SendDataAsync(DataHisto.Instance.GetCurrentConditions())));
 
          // Listen for state changes.
          server.StateChanged += (s, e) => Log.Logger.Information($"WebServer New State - {e.NewState}");

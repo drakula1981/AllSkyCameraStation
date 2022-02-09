@@ -18,6 +18,14 @@ namespace AllSkyCameraConditionService {
          Host.CreateDefaultBuilder(args)
              .UseSerilog()
              .ConfigureServices((hostContext, services) => {
+                /*services.AddQuartz(q => {
+                   q.ScheduleJob<CpuTempMonitor>(utilsTrigger => utilsTrigger.WithIdentity("CpuMonitorTrigger", "utilsTriggers")
+                     .StartNow()
+                     .WithSimpleSchedule(x => x
+                        .WithIntervalInSeconds(10)
+                        .RepeatForever())
+                     , CpuTempMonitorJob => CpuTempMonitorJob.WithIdentity("ReadCpuTempMonitor", "utilities"));
+                });*/
                 services.AddQuartz(q => {
                    q.ScheduleJob<Conditions>(meteoTrigger => meteoTrigger.WithIdentity("ReadWeatherDatasTrigger", "conditionsTriggers")
                      .StartNow()
@@ -28,7 +36,7 @@ namespace AllSkyCameraConditionService {
                 });
                 services.AddQuartz(q => {
                    q.ScheduleJob<CloudSensor>(CloudWatcherTrigger => CloudWatcherTrigger.WithIdentity("CloudWatcherTrigger", "conditionsTriggers")
-                     .StartAt(DateTimeOffset.Now.AddSeconds(30))
+                     .StartAt(DateTimeOffset.Now.AddSeconds(10))
                      .WithSimpleSchedule(x => x
                         .WithIntervalInMinutes(AppParams.MeasureInterval)
                         .RepeatForever())
@@ -36,7 +44,7 @@ namespace AllSkyCameraConditionService {
                 });
                 services.AddQuartz(q => {
                    q.ScheduleJob<SkyLuminance>(SkyQualityTrigger => SkyQualityTrigger.WithIdentity("SkyQualityTrigger", "conditionsTriggers")
-                     .StartAt(DateTimeOffset.Now.AddSeconds(30))
+                     .StartAt(DateTimeOffset.Now.AddSeconds(10))
                      .WithSimpleSchedule(x => x
                         .WithIntervalInMinutes(AppParams.MeasureInterval)
                         .RepeatForever())
@@ -56,7 +64,7 @@ namespace AllSkyCameraConditionService {
                      , WebJob => WebJob.WithIdentity("ServiceWebServer", "Web"));
                 });
                 services.AddQuartzHostedService(options => { options.WaitForJobsToComplete = false; });
-                services.AddQuartzServer(options => { options.WaitForJobsToComplete = true; });
+                services.AddQuartzServer(options => { options.WaitForJobsToComplete = false; });
              });
    }
 }

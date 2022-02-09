@@ -2,33 +2,44 @@
 using UnitsNet;
 
 namespace AllSkyCameraConditionService.Model {
-   [JsonObject("Illuminance")]
-   public class SkyConditions {
+   public struct TemperatureCalibration {
+      public static readonly float fullLuminositySlope = 0.000705244123F;
+      public static readonly float fullLuminosityIntercept = 0.9794303797F;
+      public static readonly float irSlope = -0.001939421338F;
+      public static readonly float irIntercept = 1.05F;
+   }
+
+   [JsonObject("SkyConditions")]
+   public class SkyConditions {      
       [JsonProperty("id")] public Guid Id { get; set; }
       [JsonProperty("timeStamp")] public DateTime MeasureDate { get; private set; }
-      [JsonProperty("visibleLight")] public Illuminance? VisibleLight { get; private set; }
-      [JsonProperty("infrared")] public Illuminance? Infrared { get; private set; }
-      [JsonProperty("fullSpectrum")] public Illuminance? FullSpectrum { get; private set; }
-      [JsonProperty("fullSpectrum")] public Illuminance? Integrated { get; private set; }
-      [JsonProperty("mpsas")] public double? Mpsas { 
+      [JsonProperty("visibleLight")] public double VisibleLight { get; private set; }
+      [JsonProperty("infrared")] public double Infrared { get; private set; }
+      [JsonProperty("fullSpectrum")] public double FullSpectrum { get; private set; }
+      [JsonProperty("gain")] public int Gain { get; private set; }
+      [JsonProperty("integrationTime")] public int IntegrationTime { get; private set; }
+      [JsonProperty("integrated")] public double Integrated { get; private set; }
+      [JsonProperty("mpsas")] public double Mpsas { 
          get {
-            float vis = VisibleLight.HasValue ? (float)VisibleLight?.Value / (9876.0F * 500F / 200F * 1) : 0;
-            return 12.6 - 1.086 * Math.Log(vis);
+            float vis = (float)VisibleLight / (Gain * IntegrationTime / 200F * 1);
+            return Math.Round(12.6 - 1.086 * Math.Log(vis), 2);
          } 
       }
-      [JsonProperty("dmpsas")] public double? Dmpsas  => VisibleLight.HasValue ? 1.086 / Math.Sqrt((float)VisibleLight?.Value) : 0;
-      public SkyConditions() : this(0, 0, 0, 0) { }
+      [JsonProperty("dmpsas")] public double Dmpsas => Math.Round(1.086 / Math.Sqrt((float)VisibleLight),5);
+      public SkyConditions() : this(0, 0, 0, 0, 0, 0) { }
 
-      public SkyConditions(double vis, double ir, double fs, double inte) {
+      public SkyConditions(double vis, double ir, double fs, double inte, int gain, int intTime) {
          Id = Guid.NewGuid();
          MeasureDate = DateTime.UtcNow;
-         VisibleLight = new(vis, UnitsNet.Units.IlluminanceUnit.Lux);
-         Infrared = new(ir, UnitsNet.Units.IlluminanceUnit.Lux);
-         FullSpectrum = new(fs, UnitsNet.Units.IlluminanceUnit.Lux);
-         Integrated = new(inte, UnitsNet.Units.IlluminanceUnit.Lux);
+         VisibleLight = vis;
+         Infrared = ir;
+         FullSpectrum = fs;
+         Integrated = inte;
+         Gain = gain;
+         IntegrationTime = intTime;
       }
       public override string ToString() => JsonConvert.SerializeObject(this);
 
-      public string ToCsv() => $"{MeasureDate};{FullSpectrum?.Value};{Infrared?.Value};{VisibleLight?.Value};{Integrated?.Value};{Mpsas};{Dmpsas}";
+      public string ToCsv() => $"{MeasureDate};{FullSpectrum};{Infrared};{VisibleLight};{Integrated};{Gain};{IntegrationTime};{Mpsas};{Dmpsas}";
    }
 }

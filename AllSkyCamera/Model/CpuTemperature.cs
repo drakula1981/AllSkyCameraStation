@@ -3,33 +3,42 @@
 namespace AllSkyCameraConditionService.Model {
    [JsonObject("CpuTemperature")]
    internal class CpuTemperatureDatas {
-      private const double HEATING_TEMP_TRESHOLD = 50;
-      private readonly IDictionary<int, int> dutyCyclesByTemperatures;
+      public enum FanSpeed {
+         Min,
+         Low,
+         Med,
+         High,
+         Max
+      }
+
+      private const double HEATING_TEMP_TRESHOLD = 30;
+      private readonly IDictionary<int, double> dutyCyclesByTemperatures;
       [JsonProperty("id")] public Guid Id { get; set; }
       [JsonProperty("timeStamp")] public DateTime MeasureDate { get; private set; }
       [JsonProperty("cpuTemp")] public double? CpuTemp { get; private set; }
-      [JsonProperty("gpuTemp")] public double? GpuTemp { get; private set; }
-      [JsonProperty("coolingRequired")] public bool CoolingRequired => CpuTemp >= HEATING_TEMP_TRESHOLD || GpuTemp >= HEATING_TEMP_TRESHOLD;
-       [JsonProperty("coolingValue")] public int CoolingValue { get {
-            if (CpuTemp <= HEATING_TEMP_TRESHOLD) return dutyCyclesByTemperatures[1];
-            else if(CpuTemp > 50 && CpuTemp <= 60) return dutyCyclesByTemperatures[2];
-            else if(CpuTemp > 60 && CpuTemp <= 65) return dutyCyclesByTemperatures[3];
-            else return dutyCyclesByTemperatures[4];
-         } 
+      [JsonProperty("coolingRequired")] public bool CoolingRequired => CpuTemp >= HEATING_TEMP_TRESHOLD;
+      [JsonProperty("coolingValue")] public double CoolingValue {
+         get {
+            if (CpuTemp <= HEATING_TEMP_TRESHOLD) return dutyCyclesByTemperatures[(int)FanSpeed.Min];
+            else if (CpuTemp > 30 && CpuTemp <= 40) return dutyCyclesByTemperatures[(int)FanSpeed.Low];
+            else if (CpuTemp > 40 && CpuTemp <= 50) return dutyCyclesByTemperatures[(int)FanSpeed.Med];
+            else if (CpuTemp > 50 && CpuTemp <= 65) return dutyCyclesByTemperatures[(int)FanSpeed.High];
+            else return dutyCyclesByTemperatures[(int)FanSpeed.Max];
+         }
       }
 
-      public CpuTemperatureDatas() : this(0, 0) { }
+      public CpuTemperatureDatas() : this(0) { }
 
-      public CpuTemperatureDatas(double cpuTemp, double gpuTemp) {
+      public CpuTemperatureDatas(double cpuTemp) {
          Id = Guid.NewGuid();
          MeasureDate = DateTime.UtcNow;
          CpuTemp = cpuTemp;
-         GpuTemp = gpuTemp;
-         dutyCyclesByTemperatures = new Dictionary<int, int>() {
-            {1, 25 },
-            {2, 50 },
-            {3, 75 },
-            {4, 100 }
+         dutyCyclesByTemperatures = new Dictionary<int, double>() {
+            {0, 0.25 },
+            {1, 0.30 },
+            {2, 0.50 },
+            {3, 0.75 },
+            {4, 1 }
          };
       }
       public override string ToString() => JsonConvert.SerializeObject(this);

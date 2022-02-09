@@ -6,29 +6,17 @@ using Serilog;
 
 namespace AllSkyCameraConditionService.Jobs {
    internal class CpuTempMonitor : IJob {
-      private static CameraFan? Fan1;
-      private static CameraFan? Fan2;
-      public async Task Execute(IJobExecutionContext context) => await StartRead(AppParams.Fan1GpioID, AppParams.Fan2GpioID);
+      public async Task Execute(IJobExecutionContext context) => await StartRead();
 
-      private static void Initialize(int fanGpioId1, int fanGpioId2) {
-         if (null == Fan1) Fan1 = new(fanGpioId1);
-         if (null == Fan2) Fan2 = new(fanGpioId2);
-      }
-
-      public static async Task StartRead(int gpioId1, int gpioId2) {
+      public static async Task StartRead() {
          try {
-            Initialize(gpioId1, gpioId2);
             using CpuTemperature cpuTemperature = new();
+            Log.Logger.Debug("[CpuTempMonitor] Initializing Cpu temperature Monitor");
+
             if (cpuTemperature.IsAvailable) {
-               CpuTemperatureDatas current = new(cpuTemperature.ReadTemperatures().First().Temperature.DegreesCelsius, 0);
+               CpuTemperatureDatas current = new(Math.Round(cpuTemperature.ReadTemperatures().First().Temperature.DegreesCelsius,1));
+               Log.Logger.Information($"[CpuTempMonitor] {current}");
                DataHisto.Instance.AddCpuTempDatas(current);
-               if (current.CoolingRequired) {
-                  if (null != Fan1 && !Fan1.IsCooling) Fan1.StartFan(current.CoolingValue);
-                  if (null != Fan2 && !Fan2.IsCooling) Fan2.StartFan(current.CoolingValue);
-               } else {
-                  if (null != Fan1 && Fan1.IsCooling) Fan1.StopFan();
-                  if (null != Fan2 && Fan2.IsCooling) Fan2.StopFan();
-               }
             }
          } catch (Exception ex) {
             Log.Logger.Error(ex, "[CpuTempMonitor] Error while retrieving Cpu temperature Datas");

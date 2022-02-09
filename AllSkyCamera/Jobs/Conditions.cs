@@ -53,7 +53,7 @@ namespace AllSkyCameraConditionService.Jobs {
             if (null == heater || heater.IsHeating) return;
             if (wd.TempIndex < 3 && wd.Temperature <= maxHeatingTemp) {
                if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] Starting heating...");
-               if (!heater.IsHeating) heater.Heat(wd.TempIndex > 2 ? 0 : wd.TempIndex < 0 ? 10 : 5);
+               if (!heater.IsHeating) heater.Heat();
             } else {
                if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] Heating conditions not reached : TempIndex : {wd.TempIndex} / CurrentTemp : {wd.Temperature} / MaxHeatingTemp : {maxHeatingTemp} ");
                heater.StopHeat();

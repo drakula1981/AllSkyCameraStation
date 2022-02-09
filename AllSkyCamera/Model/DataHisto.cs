@@ -24,7 +24,7 @@ namespace AllSkyCameraConditionService.Model {
       public void AddWeatherDatas(WeatherDatas datas) => WeatherDatasDb.Insert(datas);
       public void AddCloudWatcherDatas(CloudTemperatureDatas datas) => CloudWatchDb.Insert(datas);
       public void AddCpuTempDatas(CpuTemperatureDatas datas) => CpuTempDb.Insert(datas);
-      public void AddSkyQualityDatas(SkyConditions datas) => IlluDb.Insert(datas);
+      public void AddSkyQualityDatas(SkyConditions datas) { if (!double.IsNaN(datas.Mpsas) && !double.IsInfinity(datas.Mpsas) && datas.Mpsas < 21.8) IlluDb.Insert(datas); }
 
       public CurrentConditions GetCurrentConditions() => new() { Temperature = LastWeatherDatas?.Temperature,
                                                                  Humidity = LastWeatherDatas?.Humidity,
@@ -32,9 +32,9 @@ namespace AllSkyCameraConditionService.Model {
                                                                  DewPoint = LastWeatherDatas?.DewPoint,
                                                                  MeasureDate = LastWeatherDatas?.MeasureDate,
                                                                  SkyTemperature = LastCloudWatch?.SkyTemperature,
-                                                                 SkyBrightness = LastSkyDatas?.Integrated?.Value,
+                                                                 SkyBrightness = LastSkyDatas?.Integrated,
                                                                  SkyQuality = LastSkyDatas?.Mpsas,
-                                                                 CloudCoveragePercent = LastCloudWatch?.CloudCoveragePercent,
+                                                                 CloudCoverage = LastCloudWatch?.CloudCoveragePercent,
                                                                  IsSafe = LastCloudWatch?.IsSafe};
 
       public override string ToString() => JsonConvert.SerializeObject(this);

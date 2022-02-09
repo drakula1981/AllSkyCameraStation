@@ -26,19 +26,14 @@
 // unused code can be deleted and this definition removed.
 #define SafetyMonitor
 
-using ASCOM;
-using ASCOM.Astrometry;
 using ASCOM.Astrometry.AstroUtils;
 using ASCOM.DeviceInterface;
 using ASCOM.HyperRouge.Model;
 using ASCOM.Utilities;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace ASCOM.HyperRouge {
    //
@@ -255,9 +250,9 @@ namespace ASCOM.HyperRouge {
       #region ISafetyMonitor Implementation
       public bool IsSafe {
          get {
-            var isSafe = CurrentConditions.GetInstance(DatasUrl).IsSafe;
+            var isSafe = CurrentConditions.GetInstance(DatasUrl, tl).IsSafe;
             LogMessage("IsSafe Get", $"{isSafe}");
-            return isSafe;
+            return isSafe ?? false;
          }
       }
 
@@ -278,7 +273,7 @@ namespace ASCOM.HyperRouge {
       /// </summary>
       /// <param name="bRegister">If <c>true</c>, registers the driver, otherwise unregisters it.</param>
       private static void RegUnregASCOM(bool bRegister) {
-         using (var P = new ASCOM.Utilities.Profile()) {
+         using (var P = new Profile()) {
             P.DeviceType = "SafetyMonitor";
             if (bRegister) {
                P.Register(driverID, driverDescription);
@@ -345,7 +340,7 @@ namespace ASCOM.HyperRouge {
       /// <param name="message"></param>
       private void CheckConnected(string message) {
          if (!IsConnected) {
-            throw new ASCOM.NotConnectedException(message);
+            throw new NotConnectedException(message);
          }
       }
 

@@ -100,7 +100,20 @@ namespace AllSkyCameraConditionService.GpioManaging {
          return Data;
       }
       // Calculate Lux
-      public async Task<SkyConditions> GetLuxAsync() {
+      private static uint CalibrateIRReadingForTemperature(uint ir, float temp) {
+         if (-4242 == temp) return ir;
+
+         float irCalibrationFactor = temp * TemperatureCalibration.irSlope + TemperatureCalibration.irIntercept;
+         return (uint)(ir * irCalibrationFactor);
+      }
+
+      private static uint CalibrateFullReadingForTemperature(uint full, float temp) {
+         if (-4242 == temp) return full;
+
+         float fullCalibrationFactor = temp * TemperatureCalibration.fullLuminositySlope + TemperatureCalibration.fullLuminosityIntercept;
+         return (uint)(full * fullCalibrationFactor);
+      }
+      public async Task<SkyConditions> GetLuxAsync(float temp) {
          uint gain = GainSet;
          uint itime = IntTimeSet;
          uint[] Data = GetData();
@@ -114,20 +127,25 @@ namespace AllSkyCameraConditionService.GpioManaging {
          if ((CH0 == 0xFFFF) || (CH1 == 0xFFFF)) return new();
 
          // Convert from unsigned integer to floating point
-         d0 = CH0; d1 = CH1;
+         d0 = CalibrateFullReadingForTemperature(CH0, temp); 
+         d1 = CalibrateIRReadingForTemperature(CH1, temp);
+         //d0 = CH0;
+         //d1 = CH1;
 
-         int atime = (int)(itime + 1) * 100;
+         int atime = (int)itime + ((int)itime == 0 ? 1 : 0) * 100;
          var again = gain switch {
             0x00 => 1,
             0x10 => 25,
             0x20 => 428,
             0x30 => 9876,
-            _ => 1,
+               _ => 1,
          };
+
          double cpl = (atime * again) / LUX_DF;
          double lux1 = (d0 - (LUX_COEFB * d1)) / cpl;
          double lux2 = ((LUX_COEFC * d0) - (LUX_COEFD * d1)) / cpl;
-         return new(d0-d1, d1, d0, Math.Round(Math.Max(lux1, lux2), 4));
+         double integ = Math.Max(lux1, lux2); ;
+         return new(d0-d1, d1, d0, Math.Round(integ, 4), again, atime);
       }
       // Write byte
       private void Write8(byte addr, byte cmd) {

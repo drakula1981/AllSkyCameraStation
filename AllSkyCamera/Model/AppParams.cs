@@ -4,8 +4,7 @@ namespace AllSkyCameraConditionService.Model {
    public static class AppParams {
       public static int WeatherGpioID => int.Parse(ConfigurationManager.AppSettings["SensorGpioID"] ?? "0");
       public static int HeaterGpioID => int.Parse(ConfigurationManager.AppSettings["HeaterGpioID"] ?? "0");
-      public static int Fan1GpioID => int.Parse(ConfigurationManager.AppSettings["Fan1GpioID"] ?? "0");
-      public static int Fan2GpioID => int.Parse(ConfigurationManager.AppSettings["Fan2GpioID"] ?? "0");
+      public static int FanGpioID => int.Parse(ConfigurationManager.AppSettings["FanGpioID"] ?? "0");
       public static int MeasureInterval => int.Parse(ConfigurationManager.AppSettings["MeasureInterval"] ?? "10");
       public static int MaxHeatingTemp => int.Parse(ConfigurationManager.AppSettings["MaxHeatingTemp"] ?? "25");
       public static int HeatingTime => int.Parse(ConfigurationManager.AppSettings["HeatingTime"] ?? "5");

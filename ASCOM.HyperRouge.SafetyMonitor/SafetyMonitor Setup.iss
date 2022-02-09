@@ -38,13 +38,14 @@ Name: "{cf}\ASCOM\Uninstall\SafetyMonitor\SafetyMonitor"
 Name: source; Description: Install the Source files; Flags: unchecked
 
 [Files]
-Source: "D:\Sources\AllSkyCamera\ASCOM.HyperRouge.SafetyMonitor\bin\Release\ASCOM.HyperRouge.SafetyMonitor.dll"; DestDir: "{app}"
+Source: "D:\Sources\AllSkyCameraStation\ASCOM.HyperRouge.SafetyMonitor\bin\Release\ASCOM.HyperRouge.SafetyMonitor.dll"; DestDir: "{app}"
 ; Require a read-me HTML to appear after installation, maybe driver's Help doc
 Source: "D:\Sources\AllSkyCamera\ASCOM.HyperRouge.SafetyMonitor\ReadMe.htm"; DestDir: "{app}"; Flags: isreadme
 ; Optional source files (COM and .NET aware)
 Source: "D:\Sources\AllSkyCamera\ASCOM.HyperRouge.SafetyMonitor\*"; Excludes: *.zip,*.exe,*.dll, \bin\*, \obj\*; DestDir: "{app}\Source\SafetyMonitor Driver"; Tasks: source; Flags: recursesubdirs
 ; TODO: Add other files needed by your driver here (add subfolders above)
-
+Source: "D:\Sources\AllSkyCameraStation\ASCOM.HyperRouge.Model\bin\Release\ASCOM.HyperRouge.Model.dll"; DestDir: "{app}"
+Source: "D:\Sources\AllSkyCameraStation\ASCOM.HyperRouge.Model\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"
 
 ; Only if driver is .NET
 [Run]
