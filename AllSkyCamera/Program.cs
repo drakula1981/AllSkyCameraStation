@@ -18,7 +18,7 @@ namespace AllSkyCameraConditionService {
          Host.CreateDefaultBuilder(args)
              .UseSerilog()
              .ConfigureServices((hostContext, services) => {
-                /*services.AddQuartz(q => {
+               /*services.AddQuartz(q => {
                    q.ScheduleJob<CpuTempMonitor>(utilsTrigger => utilsTrigger.WithIdentity("CpuMonitorTrigger", "utilsTriggers")
                      .StartNow()
                      .WithSimpleSchedule(x => x
@@ -44,7 +44,7 @@ namespace AllSkyCameraConditionService {
                 });
                 services.AddQuartz(q => {
                    q.ScheduleJob<SkyLuminance>(SkyQualityTrigger => SkyQualityTrigger.WithIdentity("SkyQualityTrigger", "conditionsTriggers")
-                     .StartAt(DateTimeOffset.Now.AddSeconds(10))
+                     .StartAt(DateTimeOffset.Now.AddSeconds(20))
                      .WithSimpleSchedule(x => x
                         .WithIntervalInMinutes(AppParams.MeasureInterval)
                         .RepeatForever())
@@ -52,9 +52,9 @@ namespace AllSkyCameraConditionService {
                 });
                 services.AddQuartz(q => {
                    q.ScheduleJob<HistoryLogger>(HistoryLoggerTrigger => HistoryLoggerTrigger.WithIdentity("HistoryLoggerTrigger", "loggerTriggers")
-                     .StartNow()
+                     .StartAt(DateTimeOffset.Now.AddSeconds(60))
                      .WithSimpleSchedule(x => x
-                        .WithIntervalInMinutes(AppParams.MeasureInterval - 1)
+                        .WithIntervalInMinutes(0 == AppParams.MeasureInterval - 1 ? 1 : AppParams.MeasureInterval - 1)
                         .RepeatForever())
                      , LogJob => LogJob.WithIdentity("LogHistory", "Log"));
                 });

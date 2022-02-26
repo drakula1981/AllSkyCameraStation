@@ -14,7 +14,11 @@ namespace AllSkyCameraConditionService.Model {
       public static FileInfo DatasHistoryFilePath => new(ConfigurationManager.AppSettings["DatasHistoryFilePath"] ?? "/datas/dh.json");
       public static FileInfo SkyQualityDatasFilePath => new(ConfigurationManager.AppSettings["SkyQualityDatasFilePath"] ?? "/datas/sqd.json");
       public static string DbConnectionString => ConfigurationManager.AppSettings["DbConnectionString"] ?? "/datas/service.db";
-      public static string ApiAccessUrl => ConfigurationManager.AppSettings["ApiAccessUrl"] ?? "http://localhost:4242";
+      public static string ApiAccessUrl => ConfigurationManager.AppSettings["ApiAccessUrl"] ?? "http://HyperRedAllSkyCam.local:4242";
+      public static double TemperatureCorrectionCoef => double.TryParse(ConfigurationManager.AppSettings["TemperatureCorrectionCoef"], out double val) ? val : 1;
+      public static double HumidityCorrectionCoef => double.TryParse(ConfigurationManager.AppSettings["HumidityCorrectionCoef"], out double val) ? val : 1;
+      public static double PressureCorrectionCoef => double.TryParse(ConfigurationManager.AppSettings["PressureCorrectionCoef"], out double val) ? val : 1;
+      public static double SqmCorrectionCoef => double.TryParse(ConfigurationManager.AppSettings["SqmCorrectionCoef"], out double val) ? val : 1;
 
    }
 }

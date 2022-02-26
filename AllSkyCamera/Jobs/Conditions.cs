@@ -33,9 +33,13 @@ namespace AllSkyCameraConditionService.Jobs {
          }
       }
 
-      public async Task Execute(IJobExecutionContext context) => await StartRead(AppParams.MaxHeatingTemp, AppParams.HeaterGpioID);
+      public async Task Execute(IJobExecutionContext context) => await StartRead(AppParams.MaxHeatingTemp
+                                                                               , AppParams.HeaterGpioID
+                                                                               , AppParams.TemperatureCorrectionCoef
+                                                                               , AppParams.HumidityCorrectionCoef
+                                                                               , AppParams.PressureCorrectionCoef);
 
-      public static async Task StartRead(int maxHeatingTemp, int gpioID) {
+      public static async Task StartRead(int maxHeatingTemp, int gpioID, double tempAdj, double humAdj, double presAdj) {
          try {
             Initialize(gpioID);
             if (null == Sensor) {
@@ -45,9 +49,10 @@ namespace AllSkyCameraConditionService.Jobs {
             Sensor.SetPowerMode(Bmx280PowerMode.Forced);
             await Task.Delay(MeasurementTime);
             var weatherDatas = await Sensor.ReadAsync();
-            WeatherDatas wd = new(weatherDatas.Temperature.HasValue ? Math.Round(weatherDatas.Temperature.Value.DegreesCelsius + weatherDatas.Temperature.Value.DegreesCelsius*0.15, 2) : 0,
-                                  weatherDatas.Humidity.HasValue ? Math.Round(weatherDatas.Humidity.Value.Percent,1) : 0,
-                                  weatherDatas.Pressure.HasValue ? Math.Floor(weatherDatas.Pressure.Value.Hectopascals + weatherDatas.Pressure.Value.Hectopascals*0.017) : 0);
+            if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] t={weatherDatas.Temperature.GetValueOrDefault().DegreesCelsius};h={weatherDatas.Humidity.GetValueOrDefault().Percent};p={weatherDatas.Pressure.GetValueOrDefault().Hectopascals}");
+            WeatherDatas wd = new(weatherDatas.Temperature.HasValue ? Math.Round(weatherDatas.Temperature.Value.DegreesCelsius / tempAdj, 2) : 0,
+                                  weatherDatas.Humidity.HasValue ? Math.Round(weatherDatas.Humidity.Value.Percent / humAdj,1) : 0,
+                                  weatherDatas.Pressure.HasValue ? Math.Floor(weatherDatas.Pressure.Value.Hectopascals / presAdj) : 0);
             DataHisto.Instance.AddWeatherDatas(wd);
             if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] {wd}");
             if (null == heater || heater.IsHeating) return;

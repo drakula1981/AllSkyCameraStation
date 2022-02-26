@@ -16,15 +16,13 @@ namespace AllSkyCameraConditionService.Jobs {
          try {
             Sensor = new TSL2591();
             Log.Logger.Debug("[SkyLuminance] Sensor instance complete");
-            await Sensor.SetGainAsync(TSL2591.GAIN_LOW, TSL2591.INT_TIME_100MS);
-            Log.Logger.Debug("[SkyLuminance] Sensor gain/integration datas applied");
          } catch (Exception ex) {
             Log.Logger.Error(ex, "[SkyLuminance] Error while initializing luminance datas sensor");
          }
       }
 
       public async Task Execute(IJobExecutionContext context) => await StartRead();
-      
+
 
       public static async Task StartRead() {
          try {
@@ -35,27 +33,44 @@ namespace AllSkyCameraConditionService.Jobs {
             }
             float currentTemp = 0;
             if (null != DataHisto.Instance && null != DataHisto.Instance?.LastWeatherDatas) currentTemp = (float)DataHisto.Instance?.LastWeatherDatas?.Temperature;
-            Log.Logger.Debug("[SkyLuminance] Starting read Sensor datas with {TSL2591.GAIN_LOW, TSL2591.INT_TIME_100MS}");
-            var illuminanceDatas = await Sensor.GetLuxAsync(currentTemp);
-
-            if (illuminanceDatas?.Mpsas == float.NaN || illuminanceDatas?.Mpsas == float.PositiveInfinity || illuminanceDatas?.Mpsas == float.NegativeInfinity) {
-               Log.Logger.Debug("[SkyLuminance] Failed to correct Sensor datas, trying with {TSL2591.GAIN_MED, TSL2591.INT_TIME_100MS}");
-               await Sensor.SetGainAsync(TSL2591.GAIN_MED, TSL2591.INT_TIME_100MS);
+            //if (AppParams.DebugMode) Log.Logger.Information($"[SkyLuminance] Starting read Sensor datas with [TSL2591.GAIN_LOW, TSL2591.INT_TIME_100MS,temp:{currentTemp}]");
+            //var illuminanceDatas = await Sensor.GetLuxAsync(currentTemp);
+            /*var gains = new Dictionary<int, byte>() {
+               {0, TSL2591.GAIN_LOW },
+               {1, TSL2591.GAIN_MED },
+               {2, TSL2591.GAIN_HIGH},
+               {3, TSL2591.GAIN_MAX }
+            };*/
+            var times = new Dictionary<int, byte>() {
+               {0, TSL2591.INT_TIME_100MS },
+               {1, TSL2591.INT_TIME_200MS },
+               {2, TSL2591.INT_TIME_300MS },
+               {3, TSL2591.INT_TIME_400MS },
+               {4, TSL2591.INT_TIME_500MS },
+               {5, TSL2591.INT_TIME_600MS }
+            };
+            SkyConditions? illuminanceDatas = null;
+            bool endReading = false;
+            //for (var g = 0; g < gains.Count; g++) {
+            //if (endReading) continue;
+            //for (var t = 0; t < (g == gains.Count-1 ? times.Count : 1); t++) {
+            for (var t = 0; t < times.Count; t++) {
+               if (endReading) continue;
+               if (AppParams.DebugMode) Log.Logger.Information($"[SkyLuminance] Trying to read Sensor datas with [g:{TSL2591.GAIN_MAX}/9876, ti:{(t + 1) * 100},temp:{currentTemp}]");
+               await Sensor.SetGainAsync(TSL2591.GAIN_MAX, times[t]);
                illuminanceDatas = await Sensor.GetLuxAsync(currentTemp);
-               if (illuminanceDatas?.Mpsas == float.NaN || illuminanceDatas?.Mpsas == float.PositiveInfinity || illuminanceDatas?.Mpsas == float.NegativeInfinity) {
-                  Log.Logger.Debug("[SkyLuminance] Failed to correct Sensor datas, trying with {TSL2591.GAIN_HIGH, TSL2591.INT_TIME_100MS}");
-                  await Sensor.SetGainAsync(TSL2591.GAIN_HIGH, TSL2591.INT_TIME_100MS);
-                  illuminanceDatas = await Sensor.GetLuxAsync(currentTemp);
-                  if (illuminanceDatas?.Mpsas == float.NaN || illuminanceDatas?.Mpsas == float.PositiveInfinity || illuminanceDatas?.Mpsas == float.NegativeInfinity) {
-                     Log.Logger.Debug("[SkyLuminance] Failed to correct Sensor datas, trying with {TSL2591.GAIN_MAX, TSL2591.INT_TIME_100MS}");
-                     await Sensor.SetGainAsync(TSL2591.GAIN_MAX, TSL2591.INT_TIME_100MS);
-                     illuminanceDatas = await Sensor.GetLuxAsync(currentTemp);
-                  }
-               }
+               endReading = illuminanceDatas != null && !(double.IsNaN(illuminanceDatas.Mpsas) || double.IsInfinity(illuminanceDatas.Mpsas) || illuminanceDatas.VisibleLight < 0);
             }
-            if (null != illuminanceDatas) DataHisto.Instance?.AddSkyQualityDatas(illuminanceDatas);
-            if (AppParams.DebugMode) Log.Logger.Information($"[SkyLuminance] {illuminanceDatas}");
-            await Sensor.SetGainAsync(TSL2591.GAIN_LOW, TSL2591.INT_TIME_100MS);
+            //}
+
+            if (illuminanceDatas != null) {
+               DataHisto.Instance?.AddSkyQualityDatas(illuminanceDatas);
+               if (AppParams.DebugMode) Log.Logger.Information($"[SkyLuminance] {illuminanceDatas}");
+            } else {
+               if (AppParams.DebugMode) Log.Logger.Information($"[SkyLuminance] illuminanceDatas empty");
+            }
+
+            //await Sensor.SetGainAsync(TSL2591.GAIN_LOW, TSL2591.INT_TIME_100MS);
          } catch (Exception ex) {
             Log.Logger.Error(ex, "[SkyLuminance] Error while reading luminance datas sensor");
          }

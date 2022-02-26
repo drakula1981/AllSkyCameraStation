@@ -35,7 +35,7 @@ namespace AllSkyCameraConditionService.Model {
                                                                  SkyBrightness = LastSkyDatas?.Integrated,
                                                                  SkyQuality = LastSkyDatas?.Mpsas,
                                                                  CloudCoverage = LastCloudWatch?.CloudCoveragePercent,
-                                                                 IsSafe = LastCloudWatch?.IsSafe};
+                                                                 IsSafe = null != LastCloudWatch && LastCloudWatch.IsSafe};
 
       public override string ToString() => JsonConvert.SerializeObject(this);
 

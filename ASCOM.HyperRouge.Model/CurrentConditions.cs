@@ -12,9 +12,9 @@ namespace ASCOM.HyperRouge.Model {
       [JsonProperty("Pressure")] public double? Pressure { get; set; }
       [JsonProperty("DewPoint")] public double? DewPoint { get; set; }
       [JsonProperty("SkyTemperature")] public double? SkyTemperature { get; set; }
+      [JsonProperty("CloudCoverage")] public double? CloudCoverage { get; set; }
       [JsonProperty("SkyBrightness")] public double? SkyBrightness { get; set; }
       [JsonProperty("SkyQuality")] public double? SkyQuality { get; set; }
-      [JsonProperty("CloudCoverage")] public double? CloudCoverage { get; set; }
       [JsonProperty("IsSafe")] public bool? IsSafe { get; set; }
       [JsonIgnore] public static DateTime LastUpdate => null != ms_Instance ? ms_Instance.MeasureDate.Value : DateTime.Now.AddDays(-1);
       [JsonIgnore] private static CurrentConditions ms_Instance;

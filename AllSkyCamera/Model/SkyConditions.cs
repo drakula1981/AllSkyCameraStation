@@ -10,7 +10,8 @@ namespace AllSkyCameraConditionService.Model {
    }
 
    [JsonObject("SkyConditions")]
-   public class SkyConditions {      
+   public class SkyConditions {
+      private const float MPSAS_CORRECTION_COEF = 1F;
       [JsonProperty("id")] public Guid Id { get; set; }
       [JsonProperty("timeStamp")] public DateTime MeasureDate { get; private set; }
       [JsonProperty("visibleLight")] public double VisibleLight { get; private set; }
@@ -21,8 +22,8 @@ namespace AllSkyCameraConditionService.Model {
       [JsonProperty("integrated")] public double Integrated { get; private set; }
       [JsonProperty("mpsas")] public double Mpsas { 
          get {
-            float vis = (float)VisibleLight / (Gain * IntegrationTime / 200F * 1);
-            return Math.Round(12.6 - 1.086 * Math.Log(vis), 2);
+            float vis = (float)VisibleLight / (Gain * IntegrationTime / 200F * MPSAS_CORRECTION_COEF);
+            return Math.Round((12.6 - 1.086 * Math.Log(vis)) / AppParams.SqmCorrectionCoef, 2);
          } 
       }
       [JsonProperty("dmpsas")] public double Dmpsas => Math.Round(1.086 / Math.Sqrt((float)VisibleLight),5);
