@@ -9,7 +9,6 @@ namespace AllSkyCameraConditionService.Model {
       [JsonIgnore] private ILiteCollection<CloudTemperatureDatas> CloudWatchDb => db.GetCollection<CloudTemperatureDatas>("cloudWatchingDatas");
       [JsonIgnore] private ILiteCollection<CpuTemperatureDatas> CpuTempDb => db.GetCollection<CpuTemperatureDatas>("cpuTemperatureDatas");
       [JsonIgnore] private ILiteCollection<SkyConditions> IlluDb => db.GetCollection<SkyConditions>("illuminanceDatas");
-
       [JsonProperty("lastWeatherDatas")] public WeatherDatas? LastWeatherDatas => WeatherDatasDb.Query().OrderByDescending(w => w.MeasureDate).FirstOrDefault();
       [JsonProperty("weatherDatasHisto")] public List<WeatherDatas> WeatherDatasHisto => WeatherDatasDb.Query().OrderByDescending(w => w.MeasureDate).ToList();
       [JsonProperty("lastCloudWatch")] public CloudTemperatureDatas? LastCloudWatch => CloudWatchDb.Query().OrderByDescending(w => w.MeasureDate).FirstOrDefault();
@@ -25,7 +24,6 @@ namespace AllSkyCameraConditionService.Model {
       public void AddCloudWatcherDatas(CloudTemperatureDatas datas) => CloudWatchDb.Insert(datas);
       public void AddCpuTempDatas(CpuTemperatureDatas datas) => CpuTempDb.Insert(datas);
       public void AddSkyQualityDatas(SkyConditions datas) { if (!double.IsNaN(datas.Mpsas) && !double.IsInfinity(datas.Mpsas) && datas.Mpsas < 21.8) IlluDb.Insert(datas); }
-
       public CurrentConditions GetCurrentConditions() => new() { Temperature = LastWeatherDatas?.Temperature,
                                                                  Humidity = LastWeatherDatas?.Humidity,
                                                                  Pressure = LastWeatherDatas?.Pressure,

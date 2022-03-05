@@ -15,11 +15,8 @@ namespace AllSkyCameraConditionService.GpioManaging {
       }
 
       protected void High() => Gpio?.Write(PinOut, PinValue.High);
-
       protected void Low() => Gpio?.Write(PinOut, PinValue.Low);
-
       public void Dispose() => Dispose(true);
-
       public void Dispose(bool disposing) {
          if (!disposing) return;
          Gpio?.Dispose();

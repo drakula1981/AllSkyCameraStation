@@ -58,9 +58,8 @@ namespace AllSkyCameraConditionService.GpioManaging {
       public TSL2591() => Initialize();
       public static bool IsInitialized { get; private set; } = false;
       private void Initialize() {
-         if (!IsInitialized) {
-            EnsureInitializedAsync().Wait();
-         }
+         if (IsInitialized) { return; }
+         EnsureInitializedAsync().Wait();
       }
       private async Task EnsureInitializedAsync() {
          if (IsInitialized) { return; }

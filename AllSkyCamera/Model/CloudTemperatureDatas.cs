@@ -35,12 +35,7 @@ namespace AllSkyCameraConditionService.Model {
             double delta = CorSkyTemperature - temp_couvert;
             double map = Map(delta, temp_clair, temp_couvert, 0, 100);
 
-            /*if (delta > temp_couvert) return 100;
-            if (delta < temp_clair) return 0;
-            if ((delta >= temp_clair) && (delta <= temp_couvert)) {*/
             return map < 0 ? 0 : map > 100 ? 100 : map;
-            /*}
-            return -1;*/
          }
       }
       [JsonProperty("isSafe")] public bool IsSafe => CloudCoveragePercent <= acceptable_cloud;
