@@ -19,6 +19,6 @@ namespace AllSkyCameraConditionService.Model {
       public static double HumidityCorrectionCoef => double.TryParse(ConfigurationManager.AppSettings["HumidityCorrectionCoef"], out double val) ? val : 1;
       public static double PressureCorrectionCoef => double.TryParse(ConfigurationManager.AppSettings["PressureCorrectionCoef"], out double val) ? val : 1;
       public static double SqmCorrectionCoef => double.TryParse(ConfigurationManager.AppSettings["SqmCorrectionCoef"], out double val) ? val : 1;
-
+      public static double CloudTemperatureCoef => double.TryParse(ConfigurationManager.AppSettings["CloudTemperatureCoef"], out double val) ? val : 1;
    }
 }

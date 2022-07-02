@@ -29,7 +29,7 @@ namespace AllSkyCameraConditionService.Model {
                                                                  Pressure = LastWeatherDatas?.Pressure,
                                                                  DewPoint = LastWeatherDatas?.DewPoint,
                                                                  MeasureDate = LastWeatherDatas?.MeasureDate,
-                                                                 SkyTemperature = LastCloudWatch?.SkyTemperature,
+                                                                 SkyTemperature = LastCloudWatch?.CorSkyTemperature,
                                                                  SkyBrightness = LastSkyDatas?.Integrated,
                                                                  SkyQuality = LastSkyDatas?.Mpsas,
                                                                  CloudCoverage = LastCloudWatch?.CloudCoveragePercent,

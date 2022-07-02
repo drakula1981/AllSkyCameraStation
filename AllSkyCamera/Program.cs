@@ -6,6 +6,7 @@ using Serilog;
 
 namespace AllSkyCameraConditionService {
    public class Program {
+
       public static void Main(string[] args) {
          Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()

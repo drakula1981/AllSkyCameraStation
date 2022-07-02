@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Serilog;
 using UnitsNet;
 
 namespace AllSkyCameraConditionService.Model {
@@ -11,7 +12,7 @@ namespace AllSkyCameraConditionService.Model {
 
    [JsonObject("SkyConditions")]
    public class SkyConditions {
-      private const float MPSAS_CORRECTION_COEF = 1F;
+      private const double MPSAS_CORRECTION_COEF = 1;
       [JsonProperty("id")] public Guid Id { get; set; }
       [JsonProperty("timeStamp")] public DateTime MeasureDate { get; private set; }
       [JsonProperty("visibleLight")] public double VisibleLight { get; private set; }
@@ -20,13 +21,8 @@ namespace AllSkyCameraConditionService.Model {
       [JsonProperty("gain")] public int Gain { get; private set; }
       [JsonProperty("integrationTime")] public int IntegrationTime { get; private set; }
       [JsonProperty("integrated")] public double Integrated { get; private set; }
-      [JsonProperty("mpsas")] public double Mpsas { 
-         get {
-            float vis = (float)VisibleLight / (Gain * IntegrationTime / 200F * MPSAS_CORRECTION_COEF);
-            return Math.Round((12.6 - 1.086 * Math.Log(vis)) / AppParams.SqmCorrectionCoef, 2);
-         } 
-      }
-      [JsonProperty("dmpsas")] public double Dmpsas => Math.Round(1.086 / Math.Sqrt((float)VisibleLight),5);
+      [JsonProperty("mpsas")] public double Mpsas { get; private set; }
+      [JsonProperty("dmpsas")] public double Dmpsas => Math.Round(1.086 / Math.Sqrt((float)VisibleLight), 5);
       public SkyConditions() : this(0, 0, 0, 0, 0, 0) { }
 
       public SkyConditions(double vis, double ir, double fs, double inte, int gain, int intTime) {
@@ -38,6 +34,15 @@ namespace AllSkyCameraConditionService.Model {
          Integrated = inte;
          Gain = gain;
          IntegrationTime = intTime;
+         Mpsas = ComputeMpsas(vis, gain, intTime);
+      }
+      private static double ComputeMpsas(double visible, int gain, int intTime) {
+         double vis = visible / (gain * intTime / 200 * MPSAS_CORRECTION_COEF);
+         double pre = 12.6 - 1.086 * Math.Log10(vis);
+         /*Log.Information($"ComputeMpsas => vis                         = {vis}");
+         Log.Information($"ComputeMpsas => AppParams.SqmCorrectionCoef = {AppParams.SqmCorrectionCoef}");
+         Log.Information($"ComputeMpsas => precalcul                   = {pre}");*/
+         return Math.Round(pre / AppParams.SqmCorrectionCoef, 2);
       }
       public override string ToString() => JsonConvert.SerializeObject(this);
 

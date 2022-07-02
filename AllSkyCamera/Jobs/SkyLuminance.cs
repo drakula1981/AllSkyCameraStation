@@ -16,23 +16,22 @@ namespace AllSkyCameraConditionService.Jobs {
          try {
             Sensor = new TSL2591();
             Log.Logger.Debug("[SkyLuminance] Sensor instance complete");
+            await Task.Delay(10);
          } catch (Exception ex) {
             Log.Logger.Error(ex, "[SkyLuminance] Error while initializing luminance datas sensor");
          }
       }
 
-      public async Task Execute(IJobExecutionContext context) => await StartRead();
+      public async Task Execute(IJobExecutionContext context) => await StartRead(DataHisto.Instance?.LastWeatherDatas?.Temperature);
 
-
-      public static async Task StartRead() {
+      public static async Task StartRead(double? temperature) {
          try {
             await Initialize();
             if (null == Sensor) {
                Log.Logger.Error($"[SkyLuminance] Could not read luminance datas due to sensor non configuration");
                return;
             }
-            float currentTemp = 0;
-            if (null != DataHisto.Instance && null != DataHisto.Instance?.LastWeatherDatas) currentTemp = (float)DataHisto.Instance?.LastWeatherDatas?.Temperature;
+            float currentTemp = (float)(temperature ?? 0);
             var times = new Dictionary<int, byte>() {
                {0, TSL2591.INT_TIME_100MS },
                {1, TSL2591.INT_TIME_200MS },

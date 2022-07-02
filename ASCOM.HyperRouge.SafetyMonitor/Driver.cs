@@ -250,7 +250,7 @@ namespace ASCOM.HyperRouge {
       #region ISafetyMonitor Implementation
       public bool IsSafe {
          get {
-            var isSafe = CurrentConditions.GetInstance(DatasUrl, tl).IsSafe;
+            var isSafe = CurrentConditions.GetInstance(DatasUrl).IsSafe;
             LogMessage("IsSafe Get", $"{isSafe}");
             return isSafe ?? false;
          }
