@@ -24,7 +24,17 @@ namespace AllSkyCameraConditionService.Model {
       [JsonProperty("mpsas")] public double Mpsas { get; private set; }
       [JsonProperty("dmpsas")] public double Dmpsas => Math.Round(1.086 / Math.Sqrt((float)VisibleLight), 5);
       public SkyConditions() : this(0, 0, 0, 0, 0, 0) { }
-
+      public SkyConditions(DateTime measureDate, double vis, double ir, double fs, double inte, int gain, int intTime) {
+         Id = Guid.NewGuid();
+         MeasureDate = measureDate;
+         VisibleLight = vis;
+         Infrared = ir;
+         FullSpectrum = fs;
+         Integrated = inte;
+         Gain = gain;
+         IntegrationTime = intTime;
+         Mpsas = ComputeMpsas(vis, gain, intTime);
+      }
       public SkyConditions(double vis, double ir, double fs, double inte, int gain, int intTime) {
          Id = Guid.NewGuid();
          MeasureDate = DateTime.UtcNow;
