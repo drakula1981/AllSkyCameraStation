@@ -19,7 +19,7 @@ Deux Drivers ASCOM sont également développés pour des besoins personnels dans
   - Température du ciel
 - ASCOM.HyperRouge.SafetyMonitor est un pilote ASCOM permettant de déterminer, en fonction de la couverture nuageuse, si les conditions sont propices ou non à démarrer une session 
 
-INSTRUCTIONS d'installation sur raspberry Pi :
+## INSTRUCTIONS d'installation sur raspberry Pi :
  - 1 - Suivre le tutoriel d'installation de la suite Allsky (soft de base + Web gui)
  - 2 - Installer le runtime .NET 6
 	- wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
