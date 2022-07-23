@@ -11,6 +11,7 @@ namespace AllSkyCameraConditionService.Jobs {
          await SaveWeatherFile(AppParams.WeatherDatasFilePath);
          await SaveCloudWatchFile(AppParams.CloudWatcherDatasFilePath);
          await SaveSkyQualityDatasFile(AppParams.SkyQualityDatasFilePath);
+         await SaveAllSkyDatasFile(AppParams.AllSkyDatasFilePath, AppParams.AllSkyWebUIDatasFilePath);
       }
 
       private static async Task SaveJsonLog(FileInfo destFile) {
@@ -18,22 +19,15 @@ namespace AllSkyCameraConditionService.Jobs {
             destFile.MoveTo($"{destFile.DirectoryName}/{destFile.LastWriteTime:yyyyMMdd}_{destFile.Name}");
          } else destFile.Delete();
          try {
-
             var weatherGroupedDatas = DataHisto.Instance.WeatherDatasHisto.GroupBy(w => new { w.MeasureDate.Date, w.MeasureDate.Hour });
             var cloudGroupedDatas = DataHisto.Instance.CloudWatchHisto.GroupBy(w => new { w.MeasureDate.Date, w.MeasureDate.Hour });
             var skyGroupedDatas = DataHisto.Instance.SkyDatasHisto.GroupBy(w => new { w.MeasureDate.Date, w.MeasureDate.Hour });
-
-            /*Log.Logger.Information($"[HistoryLogger] weatherGroupedDatas preparation = {JsonConvert.SerializeObject(weatherGroupedDatas)}");
-            Log.Logger.Information($"[HistoryLogger] cloudGroupedDatas preparation   = {JsonConvert.SerializeObject(cloudGroupedDatas)}");
-            Log.Logger.Information($"[HistoryLogger] skyGroupedDatas preparation     = {JsonConvert.SerializeObject(skyGroupedDatas)}");*/
-
             var histo = new {
                weatherAveregedDatas = weatherGroupedDatas.Select(g => new WeatherDatas(new DateTime(g.Key.Date.Year, g.Key.Date.Month, g.Key.Date.Day, g.Key.Hour, 0, 0), g.Average(t => t.Temperature), g.Average(h => h.Humidity), g.Average(p => p.Pressure))).OrderBy(w => w.MeasureDate).ToList(),
                cloudAveregedDatas = cloudGroupedDatas.Select(g => new CloudTemperatureDatas(new DateTime(g.Key.Date.Year, g.Key.Date.Month, g.Key.Date.Day, g.Key.Hour, 0, 0), g.Average(t => t.AmbientTemperature), g.Average(h => h.MlxAmbientTemperature), g.Average(p => p.SkyTemperature))).OrderBy(w => w.MeasureDate).ToList(),
                skyAveregedDatas = skyGroupedDatas.Select(g => new SkyConditions(new DateTime(g.Key.Date.Year, g.Key.Date.Month, g.Key.Date.Day, g.Key.Hour, 0, 0), g.Average(t => t.VisibleLight), g.Average(h => h.Infrared), g.Average(p => p.FullSpectrum), g.Average(p => p.Integrated), (int)g.Average(p => p.Gain), (int)g.Average(p => p.IntegrationTime))).OrderBy(w => w.MeasureDate).ToList()
             };
 
-            //StringBuilder sb = new($"{DataHisto.Instance}");
             StringBuilder sb = new(JsonConvert.SerializeObject(histo));
             byte[] buffer = Encoding.UTF8.GetBytes(sb.ToString());
             using FileStream fs = destFile.Open(FileMode.OpenOrCreate);
@@ -54,6 +48,32 @@ namespace AllSkyCameraConditionService.Jobs {
          }
       }
 
+      private static async Task SaveAllSkyDatasFile(FileInfo destFile, FileInfo webUIDestFile) {
+         var lastWeather = DataHisto.Instance.LastWeatherDatas;
+         var skyDatas = DataHisto.Instance.LastSkyDatas;
+         var cloudWatch = DataHisto.Instance.LastCloudWatch;
+         StringBuilder sb = new();
+         sb.AppendLine($"Temperature: {lastWeather.Temperature} C");
+         sb.AppendLine($"Humidity: {lastWeather.Humidity} %");
+         sb.AppendLine($"Pressure: {lastWeather.Pressure} hPa");
+         sb.AppendLine($"SQM: {skyDatas.Mpsas} Mpsas");
+         byte[] buffer = Encoding.UTF8.GetBytes(sb.ToString());
+         using FileStream fs = destFile.Open(destFile.Exists ? FileMode.Truncate : FileMode.OpenOrCreate);
+         await fs.WriteAsync(buffer);
+         fs.Flush();
+         fs.Close();
+         sb = sb.Clear();
+         sb.AppendLine($"data\t{AppParams.MeasureInterval * 60}\tTemperature\t{lastWeather.Temperature}°C");
+         sb.AppendLine($"data\t{AppParams.MeasureInterval * 60}\tPressure\t{lastWeather.Pressure}hPa");
+         sb.AppendLine($"progress\t{AppParams.MeasureInterval * 60}\tDew Point\t{lastWeather.DewPoint}°C\t{DataHisto.Instance.WeatherDatasHisto.Where(h => h.MeasureDate.ToShortDateString().Equals(DateTime.Now.ToShortDateString())).Min(w => w.DewPoint)}\t{lastWeather.DewPoint}\t{DataHisto.Instance.WeatherDatasHisto.Where(h => h.MeasureDate.ToShortDateString().Equals(DateTime.Now.ToShortDateString())).Max(w => w.DewPoint)}\t10\t15");
+         sb.AppendLine($"progress\t{AppParams.MeasureInterval * 60}\tHumidity\t{lastWeather.Humidity}%\t0\t{lastWeather.Humidity}\t100\t85\t75");
+         sb.AppendLine($"progress\t{AppParams.MeasureInterval * 60}\tCloud Percent\t{cloudWatch.CloudCoveragePercent}%\t0\t{cloudWatch.CloudCoveragePercent}\t100\t30\t20");
+         buffer = Encoding.UTF8.GetBytes(sb.ToString());
+         using FileStream fs2 = webUIDestFile.Open(webUIDestFile.Exists ? FileMode.Truncate : FileMode.OpenOrCreate);
+         await fs2.WriteAsync(buffer);
+         fs2.Flush();
+         fs2.Close();
+      }
       private static async Task SaveWeatherFile(FileInfo destFile) => await Conditions.ToCsv(destFile);
       private static async Task SaveCloudWatchFile(FileInfo destFile) => await CloudSensor.ToCsv(destFile);
       private static async Task SaveSkyQualityDatasFile(FileInfo destFile) => await SkyLuminance.ToCsv(destFile);

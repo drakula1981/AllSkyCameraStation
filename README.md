@@ -23,11 +23,15 @@ Two ASCOM Drivers are also developed for personal needs as part of the implement
 
 - 1 - Follow the installation tutorial of the Allsky suite (basic software + Web gui)
 - 2 - Install the .NET runtime 6
+	- wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
+	- chmod +x ./dotnet-install.sh
+	- ./dotnet-install.sh
 - 3 - Unzip the archive AllSkyCameraConditionService_1.0.zip in / usr / bin / AllSkyService
 - 4 - execute the following commands:
+  - sudo raspi-config -> Activate I2C in the peripheral parameters
   - cd / usr / bin / AllSkyService
   - sudo cp AllSkyConditionsService.service /etc/systemd/system/AllSkyConditionsService.service
   - sudo systemctl daemon-reload
-  - sudo nano AllSkyCameraConditionService.dll.config (edition of the service configuration
+  - sudo nano AllSkyCameraConditionService.dll.config (edition of the service configuration)
   - sudo systemctl start AllSkyConditionsService
   - sudo systemctl status AllSkyConditionsService

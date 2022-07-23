@@ -22,11 +22,15 @@ Deux Drivers ASCOM sont également développés pour des besoins personnels dans
 INSTRUCTIONS d'installation sur raspberry Pi :
  - 1 - Suivre le tutoriel d'installation de la suite Allsky (soft de base + Web gui)
  - 2 - Installer le runtime .NET 6
+	- wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
+	- chmod +x ./dotnet-install.sh
+	- ./dotnet-install.sh
  - 3 - Dezipper l'archive AllSkyCameraConditionService_1.0.zip dans /usr/bin/AllSkyService
  - 4 - executer les commandes suivantes :
+	- sudo raspi-config -> Activer I2C dans les paramètres de périphériques
     - cd /usr/bin/AllSkyService
     - sudo cp AllSkyConditionsService.service /etc/systemd/system/AllSkyConditionsService.service
     - sudo systemctl daemon-reload
-    - sudo nano AllSkyCameraConditionService.dll.config (edition de la configuration du service
+    - sudo nano AllSkyCameraConditionService.dll.config (edition de la configuration du service)
     - sudo systemctl start AllSkyConditionsService
     - sudo systemctl status AllSkyConditionsService

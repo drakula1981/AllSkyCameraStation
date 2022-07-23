@@ -23,7 +23,7 @@ namespace AllSkyCameraConditionService {
                    q.ScheduleJob<CpuTempMonitor>(utilsTrigger => utilsTrigger.WithIdentity("CpuMonitorTrigger", "utilsTriggers")
                      .StartNow()
                      .WithSimpleSchedule(x => x
-                        .WithIntervalInSeconds(10)
+                        .WithIntervalInSeconds(AppParams.MeasureInterval*10)
                         .RepeatForever())
                      , CpuTempMonitorJob => CpuTempMonitorJob.WithIdentity("ReadCpuTempMonitor", "utilities"));
                 });*/

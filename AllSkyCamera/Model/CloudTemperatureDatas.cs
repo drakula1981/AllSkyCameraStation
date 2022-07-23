@@ -12,6 +12,8 @@ namespace AllSkyCameraConditionService.Model {
       };
       private const double K1_Winter = 33;
       private const double K1_Summer = 66;
+      private const double K1_HighTemp = 80;
+
       private const double K2 = 0;
       private const double K3 = 4;
       private const double K4 = 100;
@@ -34,7 +36,7 @@ namespace AllSkyCameraConditionService.Model {
          AmbientTemperature = ambTemp;
          MlxAmbientTemperature = sAmbTemp;
          SkyTemperature = skyTemp;
-         CorSkyTemperatureCoef = ComputeTempCorrectionCoefficient(AmbientTemperature ?? MlxAmbientTemperature);
+         CorSkyTemperatureCoef = ComputeTempCorrectionCoefficient(AmbientTemperature ?? MlxAmbientTemperature, SkyTemperature);
          CloudCoveragePercent = ComputeCloudCoveragePercent();
       }
       public CloudTemperatureDatas(double? ambTemp, double sAmbTemp, double skyTemp) {
@@ -43,7 +45,7 @@ namespace AllSkyCameraConditionService.Model {
          AmbientTemperature = ambTemp;
          MlxAmbientTemperature = sAmbTemp;
          SkyTemperature = skyTemp;
-         CorSkyTemperatureCoef = ComputeTempCorrectionCoefficient(AmbientTemperature ?? MlxAmbientTemperature);
+         CorSkyTemperatureCoef = ComputeTempCorrectionCoefficient(AmbientTemperature ?? MlxAmbientTemperature, SkyTemperature);
          CloudCoveragePercent = ComputeCloudCoveragePercent();
       }
 
@@ -56,9 +58,10 @@ namespace AllSkyCameraConditionService.Model {
          return Math.Ceiling(m1 * m2 / m3 + m4);
       }
       private static int GetQuarter(DateTime date) => (date.Month + 2) / 3;
-      private static double ComputeTempCorrectionCoefficient(double ambiant) {
-         double k1 = (GetQuarter(DateTime.Now) == 3 ? K1_Summer : K1_Winter) / 100;
-         double k2 = ambiant - K2 / 10;
+      private static double ComputeTempCorrectionCoefficient(double ambiant, double skyTemp) {
+         double deltaTemp = (skyTemp / ambiant)*10;
+         double k1 = (GetQuarter(DateTime.Now) == 3 ? deltaTemp <= 7 || DateTime.Now.Hour <= 5 || DateTime.Now.Hour >= 21 ? K1_Summer: deltaTemp >= 8 ? K1_HighTemp + 10 : K1_HighTemp : K1_Winter) / 100;
+         double k2 = ambiant - (K2 + deltaTemp) / 10;
          double k3 = K3 / 100;
          double k4 = Math.Pow(Math.Exp(K4 / 1000 * ambiant), K5 / 100);
          //Log.Logger.Information($"[CloudTemperatureDatas.ComputeTempCorrectionCoefficient] k1[{k1}] * k2[{k2}] + k3[{k3}] * k4 [{k4}] => {Math.Round(k1 * k2 + k3 * k4, 2)}");
