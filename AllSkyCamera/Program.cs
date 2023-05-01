@@ -11,22 +11,17 @@ namespace AllSkyCameraConditionService {
          Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console()
+            .WriteTo.File(AppParams.LogFilePath, Serilog.Events.LogEventLevel.Error)
             .CreateLogger();
          CreateHostBuilder(args).Build().Run();
       }
 
-      public static IHostBuilder CreateHostBuilder(string[] args) =>
-         Host.CreateDefaultBuilder(args)
+      public static IHostBuilder CreateHostBuilder(string[] args) {
+         var sunDatas = EphemeridClient.GetSunDatas().Result;
+         //Log.Information($"{sunDatas}");
+         return Host.CreateDefaultBuilder(args)
              .UseSerilog()
              .ConfigureServices((hostContext, services) => {
-               /*services.AddQuartz(q => {
-                   q.ScheduleJob<CpuTempMonitor>(utilsTrigger => utilsTrigger.WithIdentity("CpuMonitorTrigger", "utilsTriggers")
-                     .StartNow()
-                     .WithSimpleSchedule(x => x
-                        .WithIntervalInSeconds(AppParams.MeasureInterval*10)
-                        .RepeatForever())
-                     , CpuTempMonitorJob => CpuTempMonitorJob.WithIdentity("ReadCpuTempMonitor", "utilities"));
-                });*/
                 services.AddQuartz(q => {
                    q.ScheduleJob<Conditions>(meteoTrigger => meteoTrigger.WithIdentity("ReadWeatherDatasTrigger", "conditionsTriggers")
                      .StartNow()
@@ -37,18 +32,12 @@ namespace AllSkyCameraConditionService {
                 });
                 services.AddQuartz(q => {
                    q.ScheduleJob<CloudSensor>(CloudWatcherTrigger => CloudWatcherTrigger.WithIdentity("CloudWatcherTrigger", "conditionsTriggers")
-                     .StartAt(DateTimeOffset.Now.AddSeconds(10))
-                     .WithSimpleSchedule(x => x
-                        .WithIntervalInMinutes(AppParams.MeasureInterval)
-                        .RepeatForever())
-                     , meteoJob => meteoJob.WithIdentity("CloudWatcherDatas", "conditions"));
+                    .WithCronSchedule($"0 0/{AppParams.MeasureInterval} {sunDatas.Setting.Hour[..2]}-{sunDatas.Rising.Hour[..2]} * * ?")
+                    , meteoJob => meteoJob.WithIdentity("CloudWatcherDatas", "conditions"));
                 });
                 services.AddQuartz(q => {
                    q.ScheduleJob<SkyLuminance>(SkyQualityTrigger => SkyQualityTrigger.WithIdentity("SkyQualityTrigger", "conditionsTriggers")
-                     .StartAt(DateTimeOffset.Now.AddSeconds(20))
-                     .WithSimpleSchedule(x => x
-                        .WithIntervalInMinutes(AppParams.MeasureInterval)
-                        .RepeatForever())
+                    .WithCronSchedule($"0 0/{AppParams.MeasureInterval+2} {sunDatas.Setting.Hour[..2]}-{sunDatas.Rising.Hour[..2]} * * ?")
                      , meteoJob => meteoJob.WithIdentity("SkyQualityDatas", "conditions"));
                 });
                 services.AddQuartz(q => {
@@ -57,7 +46,8 @@ namespace AllSkyCameraConditionService {
                      .WithSimpleSchedule(x => x
                         .WithIntervalInMinutes(0 == AppParams.MeasureInterval - 1 ? 1 : AppParams.MeasureInterval - 1)
                         .RepeatForever())
-                     , LogJob => LogJob.WithIdentity("LogHistory", "Log"));
+                     , LogJob => LogJob.WithIdentity("LogHistory", "Log")
+                                       .UsingJobData("SunRiseSetDatas", sunDatas.ToString()));
                 });
                 services.AddQuartz(q => {
                    q.ScheduleJob<ServiceWebServer>(ServiceWebServerTrigger => ServiceWebServerTrigger.WithIdentity("ServiceWebServer", "webTriggers")
@@ -67,5 +57,6 @@ namespace AllSkyCameraConditionService {
                 services.AddQuartzHostedService(options => { options.WaitForJobsToComplete = false; });
                 services.AddQuartzServer(options => { options.WaitForJobsToComplete = false; });
              });
+      }
    }
 }

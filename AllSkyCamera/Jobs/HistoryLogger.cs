@@ -6,12 +6,16 @@ using System.Text;
 
 namespace AllSkyCameraConditionService.Jobs {
    internal class HistoryLogger : IJob {
+
       public async Task Execute(IJobExecutionContext context) {
+         JobDataMap dataMap = context.JobDetail.JobDataMap;
+         if (null == dataMap) throw new ArgumentException("dataMap is empty");
+         var SunRiseSetDatas = dataMap.GetString("SunRiseSetDatas") ?? String.Empty;
          await SaveJsonLog(AppParams.DatasHistoryFilePath);
          await SaveWeatherFile(AppParams.WeatherDatasFilePath);
          await SaveCloudWatchFile(AppParams.CloudWatcherDatasFilePath);
          await SaveSkyQualityDatasFile(AppParams.SkyQualityDatasFilePath);
-         await SaveAllSkyDatasFile(AppParams.AllSkyDatasFilePath, AppParams.AllSkyWebUIDatasFilePath);
+         await SaveAllSkyDatasFile(AppParams.AllSkyDatasFilePath, AppParams.AllSkyWebUIDatasFilePath, JsonConvert.DeserializeObject<Root>(SunRiseSetDatas));
       }
 
       private static async Task SaveJsonLog(FileInfo destFile) {
@@ -35,7 +39,7 @@ namespace AllSkyCameraConditionService.Jobs {
             fs.Flush();
             fs.Close();
             Log.Logger.Information($"[HistoryLogger] destFile[{destFile}] delivered");
-            sb = sb.Clear().Append($"{{\"LastCloudWatch\":{DataHisto.Instance.LastCloudWatch},\"LastWeatherDatas\":{DataHisto.Instance.LastWeatherDatas}, \"LastSkyQualityDatas\":{DataHisto.Instance.LastSkyDatas}}}");
+            sb = sb.Clear().Append($"{{\"LastCloudWatch\":{DataHisto.Instance.LastCloudWatch},\"LastWeatherDatas\":{DataHisto.Instance.LastWeatherDatas}, \"LastSkyQualityDatas\":{DataHisto.Instance.LastSkyDatas},\"MoonDatas\":{Moon.Now()}}}");
             buffer = Encoding.UTF8.GetBytes(sb.ToString());
             var currentInfosJson = new FileInfo($"{destFile.DirectoryName}/current.json");
             if (currentInfosJson.Exists) currentInfosJson.Delete();
@@ -48,15 +52,22 @@ namespace AllSkyCameraConditionService.Jobs {
          }
       }
 
-      private static async Task SaveAllSkyDatasFile(FileInfo destFile, FileInfo webUIDestFile) {
+      private static async Task SaveAllSkyDatasFile(FileInfo destFile, FileInfo webUIDestFile, Root? sunDatas) {
          var lastWeather = DataHisto.Instance.LastWeatherDatas;
          var skyDatas = DataHisto.Instance.LastSkyDatas;
          var cloudWatch = DataHisto.Instance.LastCloudWatch;
+
+         int dawn = int.TryParse(sunDatas.Rising.Hour[..2], out int h) ? h : 12;
+         int dusk = int.TryParse(sunDatas.Setting.Hour[..2], out h) ? h : 12;
          StringBuilder sb = new();
-         sb.AppendLine($"Temperature: {lastWeather.Temperature} C");
-         sb.AppendLine($"Humidity: {lastWeather.Humidity} %");
-         sb.AppendLine($"Pressure: {lastWeather.Pressure} hPa");
-         sb.AppendLine($"SQM: {skyDatas.Mpsas} Mpsas");
+
+         sb.AppendLine($"Temperature: {lastWeather.Temperature} C")
+           .AppendLine($"Pressure: {lastWeather.Pressure} hPa")
+           .AppendLine($"Humidity: {lastWeather.Humidity} %");
+         if (!DateTime.Now.Hour.IsWithin(dawn, dusk)) sb.AppendLine($"SQM: {skyDatas.Mpsas} Mpsas")
+                                                        .AppendLine($"AstroDawn: {sunDatas.DawnAstronomical.Hour}")
+                                                        .AppendLine($"Moon age: {Moon.Now().MoonAge}");
+         else sb.AppendLine($"AstroDusk: {sunDatas.DuskAstronomical.Hour}");
          byte[] buffer = Encoding.UTF8.GetBytes(sb.ToString());
          using FileStream fs = destFile.Open(destFile.Exists ? FileMode.Truncate : FileMode.OpenOrCreate);
          await fs.WriteAsync(buffer);
@@ -67,7 +78,7 @@ namespace AllSkyCameraConditionService.Jobs {
          sb.AppendLine($"data\t{AppParams.MeasureInterval * 60}\tPressure\t{lastWeather.Pressure}hPa");
          sb.AppendLine($"progress\t{AppParams.MeasureInterval * 60}\tDew Point\t{lastWeather.DewPoint}°C\t{DataHisto.Instance.WeatherDatasHisto.Where(h => h.MeasureDate.ToShortDateString().Equals(DateTime.Now.ToShortDateString())).Min(w => w.DewPoint)}\t{lastWeather.DewPoint}\t{DataHisto.Instance.WeatherDatasHisto.Where(h => h.MeasureDate.ToShortDateString().Equals(DateTime.Now.ToShortDateString())).Max(w => w.DewPoint)}\t10\t15");
          sb.AppendLine($"progress\t{AppParams.MeasureInterval * 60}\tHumidity\t{lastWeather.Humidity}%\t0\t{lastWeather.Humidity}\t100\t85\t75");
-         sb.AppendLine($"progress\t{AppParams.MeasureInterval * 60}\tCloud Percent\t{cloudWatch.CloudCoveragePercent}%\t0\t{cloudWatch.CloudCoveragePercent}\t100\t30\t20");
+         if (!DateTime.Now.Hour.IsWithin(dawn, dusk)) sb.AppendLine($"progress\t{AppParams.MeasureInterval * 60}\tCloud Percent\t{cloudWatch.CloudCoveragePercent}%\t0\t{cloudWatch.CloudCoveragePercent}\t100\t30\t20");
          buffer = Encoding.UTF8.GetBytes(sb.ToString());
          using FileStream fs2 = webUIDestFile.Open(webUIDestFile.Exists ? FileMode.Truncate : FileMode.OpenOrCreate);
          await fs2.WriteAsync(buffer);

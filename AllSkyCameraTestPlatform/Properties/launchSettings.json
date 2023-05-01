@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AllSkyCameraTestPlatform": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -10,8 +10,22 @@ namespace AllSkyCameraConditionService.Model {
          {3, new int[] { 5,  0 } },
          {4, new int[] { 0, -5 } }
       };
-      private const double K1_Winter = 33;
-      private const double K1_Summer = 66;
+
+      private static readonly IDictionary<int, double> YearK1Values = new Dictionary<int, double>() {
+         {01, 33},
+         {02, 33},
+         {03, 33},
+         {04, 55},
+         {05, 55},
+         {06, 66},
+         {07, 66},
+         {08, 66},
+         {09, 66},
+         {10, 55},
+         {11, 33},
+         {12, 33}
+      };
+
       private const double K1_HighTemp = 80;
 
       private const double K2 = 0;
@@ -54,18 +68,33 @@ namespace AllSkyCameraConditionService.Model {
          var m2 = out_max - out_min;
          var m3 = in_max - in_min;
          var m4 = out_min;
-         //Log.Logger.Information($"[CloudTemperatureDatas.Map] m1(x - in_min)[{m1}] * m2(out_max - out_min)[{m2}] / m3(in_max - in_min)[{m3}] + m4(out_min)[{m4}] => [{m1 * m2 / m3 + m4}]");
-         return Math.Ceiling(m1 * m2 / m3 + m4);
+         var map = Math.Ceiling(m1 * m2 / m3 + m4);
+
+         Log.Logger.Debug($"[CloudTemperatureDatas.Map] m1(x - in_min)[{m1}] * m2(out_max - out_min)[{m2}] / m3(in_max - in_min)[{m3}] + m4(out_min)[{m4}] => [{map}]");
+         return map;
       }
       private static int GetQuarter(DateTime date) => (date.Month + 2) / 3;
       private static double ComputeTempCorrectionCoefficient(double ambiant, double skyTemp) {
-         double deltaTemp = (skyTemp / ambiant)*10;
-         double k1 = (GetQuarter(DateTime.Now) == 3 ? deltaTemp <= 7 || DateTime.Now.Hour <= 5 || DateTime.Now.Hour >= 21 ? K1_Summer: deltaTemp >= 8 ? K1_HighTemp + 10 : K1_HighTemp : K1_Winter) / 100;
+         double deltaTemp = (skyTemp / ambiant) * 10;
+
+         double K1 = YearK1Values[DateTime.Now.Month];
+         Log.Logger.Debug($"[CloudTemperatureDatas.ComputeTempCorrectionCoefficient] Constants:K1[{K1}] / K2[{K2}] / K3[{K3}] / K4[{K4}] / K5[{K5}]");
+
+         double k1 = K1 / 100;
+         Log.Logger.Debug($"[CloudTemperatureDatas.ComputeTempCorrectionCoefficient] k1 = K1 / 100 ==> [{k1}]");
+
          double k2 = ambiant - (K2 + deltaTemp) / 10;
+         Log.Logger.Debug($"[CloudTemperatureDatas.ComputeTempCorrectionCoefficient] k2 = ambiant - (K2 + deltaTemp) / 10 ==> [{k2}]");
+
          double k3 = K3 / 100;
+         Log.Logger.Debug($"[CloudTemperatureDatas.ComputeTempCorrectionCoefficient] k3 = K3 / 100 ==> [{k3}]");
+
          double k4 = Math.Pow(Math.Exp(K4 / 1000 * ambiant), K5 / 100);
-         //Log.Logger.Information($"[CloudTemperatureDatas.ComputeTempCorrectionCoefficient] k1[{k1}] * k2[{k2}] + k3[{k3}] * k4 [{k4}] => {Math.Round(k1 * k2 + k3 * k4, 2)}");
-         return Math.Round(k1 * k2 + k3 * k4, 2);
+         Log.Logger.Debug($"[CloudTemperatureDatas.ComputeTempCorrectionCoefficient] k4 = Math.Pow(Math.Exp(K4 / 1000 * ambiant), K5 / 100) ==> [{k4}]");
+
+         double coef = Math.Round(k1 * k2 + k3 * k4, 2);
+         Log.Logger.Debug($"[CloudTemperatureDatas.ComputeTempCorrectionCoefficient] coef = Math.Round(k1 * k2 + k3 * k4, 2) ==> [{coef}]");
+         return coef;
       }
 
       private double ComputeCloudCoveragePercent() {

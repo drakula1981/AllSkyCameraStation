@@ -56,7 +56,7 @@ namespace AllSkyCameraConditionService.Jobs {
             DataHisto.Instance.AddWeatherDatas(wd);
             if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] {wd}");
             if (null == heater || heater.IsHeating) return;
-            if (wd.TempIndex < 3 && wd.Temperature <= maxHeatingTemp) {
+            if ((wd.TempIndex < 3 && wd.Temperature <= maxHeatingTemp) || wd.Humidity >= 90) {
                if (AppParams.DebugMode) Log.Logger.Information($"[Conditions] Starting heating...");
                if (!heater.IsHeating) heater.Heat();
             } else {

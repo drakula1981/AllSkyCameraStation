@@ -13,6 +13,7 @@ namespace AllSkyCameraConditionService.Model {
       [JsonProperty("SkyBrightness")] public double? SkyBrightness { get; set; }
       [JsonProperty("SkyQuality")] public double? SkyQuality { get; set; }
       [JsonProperty("IsSafe")] public bool? IsSafe { get; set; }
+      [JsonProperty("MoonAge")] public string? MoonAge { get; set; }
       public override string ToString() => JsonConvert.SerializeObject(this);
    }
 }

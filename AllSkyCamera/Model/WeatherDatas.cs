@@ -25,16 +25,11 @@ namespace AllSkyCameraConditionService.Model {
          Id = Guid.NewGuid();
          MeasureDate = measureDate;
          Temperature = temp;
-         Humidity = hum;
+         Humidity = hum > 100 ? 100 : hum;
          Pressure = pres;
       }
-      public WeatherDatas(double temp, double hum, double pres) {
-         Id = Guid.NewGuid();
-         MeasureDate = DateTime.UtcNow;
-         Temperature = temp;
-         Humidity = hum;
-         Pressure = pres;
-      }
+      public WeatherDatas(double temp, double hum, double pres) : this(DateTime.UtcNow, temp, hum, pres) { }
+
       public override string ToString() => JsonConvert.SerializeObject(this);
 
       public string ToCsv() => $"{MeasureDate};{Pressure};{Temperature};{Humidity};{DewPoint};{TempIndex:n0}";
