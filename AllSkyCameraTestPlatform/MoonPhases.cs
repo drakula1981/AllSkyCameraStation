@@ -29,7 +29,7 @@ namespace AllSkyCameraTestPlatform.Model {
          var period = 30 / Names.Count;
          // divide the phases into equal parts 
          // making sure there are no gaps
-         allPhases.AddRange(Names.Select((t, i) => new Phase(t, period * i, period * (i + 1))));
+         allPhases.AddRange(Names.Select((t, i) => new Phase(t, period * i, i == Names.Count -1 ? TotalLengthOfCycle : period * (i + 1))));
       }
       /// <summary>
       /// Calculate the current phase of the moon.
@@ -105,8 +105,8 @@ namespace AllSkyCameraTestPlatform.Model {
                    ? halfCycle - (DaysIntoCycle % halfCycle)
                    // leading up to the full moon
                    : DaysIntoCycle+1.485;
-
-               return Math.Round(numerator / halfCycle * 100, 2);
+               var vis = Math.Round(numerator / halfCycle * 100, 2);
+               return DaysIntoCycle <= 2 ? 0 : vis > 100 ? 100 : vis;
             }
          }
 

@@ -10,8 +10,12 @@ public class Program {
          .CreateLogger();
       //var sun = await EphemeridClient.GetSunDatas();
       //Log.Information($"{sun}");
-      var moon = Moon.UtcNow();
-      Log.Information($"{moon}");
+      Log.Information($"Now : {Moon.UtcNow()}");
+      Log.Information($"Tomorrow : {Moon.Calculate(DateTime.UtcNow.AddDays(1))}");
+      Log.Information($"Next week : {Moon.Calculate(DateTime.UtcNow.AddDays(7))}");
+      Log.Information($"Next 2 weeks : {Moon.Calculate(DateTime.UtcNow.AddDays(14.6))}");
+      Log.Information($"Next 2 weeks : {Moon.Calculate(DateTime.UtcNow.AddDays(18))}");
+      Log.Information($"Next Month : {Moon.Calculate(DateTime.UtcNow.AddDays(30))}");
       Console.ReadLine();
    }
 }

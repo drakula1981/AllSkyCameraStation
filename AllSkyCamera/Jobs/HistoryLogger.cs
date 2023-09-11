@@ -65,9 +65,9 @@ namespace AllSkyCameraConditionService.Jobs {
            .AppendLine($"Pressure: {lastWeather.Pressure} hPa")
            .AppendLine($"Humidity: {lastWeather.Humidity} %");
          if (!DateTime.Now.Hour.IsWithin(dawn, dusk)) sb.AppendLine($"SQM: {skyDatas.Mpsas} Mpsas")
-                                                        .AppendLine($"AstroDawn: {sunDatas.DawnAstronomical.Hour}")
+                                                        .AppendLine($"AstroDawn: {sunDatas.DawnAstronomical?.Hour}")
                                                         .AppendLine($"Moon age: {Moon.Now().MoonAge}");
-         else sb.AppendLine($"AstroDusk: {sunDatas.DuskAstronomical.Hour}");
+         else sb.AppendLine($"AstroDusk: {sunDatas.DuskAstronomical?.Hour}");
          byte[] buffer = Encoding.UTF8.GetBytes(sb.ToString());
          using FileStream fs = destFile.Open(destFile.Exists ? FileMode.Truncate : FileMode.OpenOrCreate);
          await fs.WriteAsync(buffer);
