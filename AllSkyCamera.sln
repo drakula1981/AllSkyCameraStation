@@ -8,7 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{048FED01-6E92-49A9-A4AD-944C1C295E92}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		AllSkyCameraGraph.html = AllSkyCameraGraph.html
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCOM.HyperRouge.ObservingConditions", "ASCOM.HyperRouge.ObservingConditions\ASCOM.HyperRouge.ObservingConditions.csproj", "{64308775-BD4A-469C-BCAB-3ED830B811AF}"
@@ -17,7 +16,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCOM.HyperRouge.Model", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCOM.HyperRouge.SafetyMonitor", "ASCOM.HyperRouge.SafetyMonitor\ASCOM.HyperRouge.SafetyMonitor.csproj", "{1EFDC8D5-476D-4F5F-816D-A1EA2E7BA711}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllSkyCameraTestPlatform", "AllSkyCameraTestPlatform\AllSkyCameraTestPlatform.csproj", "{0232EBEA-19D5-42DE-8EB7-2DA5968E80EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AllSkyCameraTestPlatform", "AllSkyCameraTestPlatform\AllSkyCameraTestPlatform.csproj", "{0232EBEA-19D5-42DE-8EB7-2DA5968E80EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AllSkyCameraConditions.Service", "AllSkyCameraConditions.Service", "{A8C6E752-5820-4C57-B2ED-C71003679C87}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ASCOM_Drivers", "ASCOM_Drivers", "{A4BD60FC-CBFB-4D84-AE5D-A89442D9BEB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc_Tests", "Misc_Tests", "{5E132742-D72A-499F-87CC-362B4A6586FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AllSkyCameraConditions.Lib", "AllSkyCameraConditions.Lib", "{D83E8B06-0F36-46C0-B3C1-8E1E8261CB37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllSkyCameraConditions.Model", "AllSkyCameraConditions.Model\AllSkyCameraConditions.Model.csproj", "{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllSkyCameraConditionService.GpioManaging", "AllSkyCameraConditionService.GpioManaging\AllSkyCameraConditionService.GpioManaging.csproj", "{D3A3BE1D-C029-458C-9281-540AD926679C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllSkyCameraConditions.Interfaces", "AllSkyCameraConditions.Interfaces\AllSkyCameraConditions.Interfaces.csproj", "{68ECA06A-94B2-42FE-9951-7D61BA1D733B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllSkyCameraConditions.Services", "AllSkyCameraConditions.Services\AllSkyCameraConditions.Services.csproj", "{BC5E492D-355A-4F17-A976-0AB7B6731DA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,9 +104,68 @@ Global
 		{0232EBEA-19D5-42DE-8EB7-2DA5968E80EB}.Release|x64.Build.0 = Release|Any CPU
 		{0232EBEA-19D5-42DE-8EB7-2DA5968E80EB}.Release|x86.ActiveCfg = Release|Any CPU
 		{0232EBEA-19D5-42DE-8EB7-2DA5968E80EB}.Release|x86.Build.0 = Release|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Debug|x64.Build.0 = Debug|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Debug|x86.Build.0 = Debug|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Release|x64.ActiveCfg = Release|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Release|x64.Build.0 = Release|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Release|x86.ActiveCfg = Release|Any CPU
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF}.Release|x86.Build.0 = Release|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Debug|x64.Build.0 = Debug|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Debug|x86.Build.0 = Debug|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Release|x64.ActiveCfg = Release|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Release|x64.Build.0 = Release|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Release|x86.ActiveCfg = Release|Any CPU
+		{D3A3BE1D-C029-458C-9281-540AD926679C}.Release|x86.Build.0 = Release|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Debug|x64.Build.0 = Debug|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Debug|x86.Build.0 = Debug|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Release|x64.ActiveCfg = Release|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Release|x64.Build.0 = Release|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Release|x86.ActiveCfg = Release|Any CPU
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B}.Release|x86.Build.0 = Release|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Debug|x64.Build.0 = Debug|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Debug|x86.Build.0 = Debug|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Release|x64.ActiveCfg = Release|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Release|x64.Build.0 = Release|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Release|x86.ActiveCfg = Release|Any CPU
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D5B44610-C252-4ADE-A5A5-8C4C7A60E155} = {A8C6E752-5820-4C57-B2ED-C71003679C87}
+		{64308775-BD4A-469C-BCAB-3ED830B811AF} = {A4BD60FC-CBFB-4D84-AE5D-A89442D9BEB3}
+		{62A3B7FA-AA7C-42A5-82BC-3E5E54E9CA72} = {A4BD60FC-CBFB-4D84-AE5D-A89442D9BEB3}
+		{1EFDC8D5-476D-4F5F-816D-A1EA2E7BA711} = {A4BD60FC-CBFB-4D84-AE5D-A89442D9BEB3}
+		{0232EBEA-19D5-42DE-8EB7-2DA5968E80EB} = {5E132742-D72A-499F-87CC-362B4A6586FD}
+		{40C32DD5-6CCE-46DC-B587-72B0CACF15DF} = {D83E8B06-0F36-46C0-B3C1-8E1E8261CB37}
+		{D3A3BE1D-C029-458C-9281-540AD926679C} = {D83E8B06-0F36-46C0-B3C1-8E1E8261CB37}
+		{68ECA06A-94B2-42FE-9951-7D61BA1D733B} = {D83E8B06-0F36-46C0-B3C1-8E1E8261CB37}
+		{BC5E492D-355A-4F17-A976-0AB7B6731DA8} = {D83E8B06-0F36-46C0-B3C1-8E1E8261CB37}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {112A446F-1F7C-4C92-82CC-CCA454F3A7CB}

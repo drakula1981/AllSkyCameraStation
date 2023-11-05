@@ -1,19 +1,18 @@
 ﻿using Newtonsoft.Json;
 
-namespace AllSkyCameraConditionService.Model {
-   [JsonObject("CurrentConditions")]
-   internal class CurrentConditions {
-      [JsonProperty("MeasureDate")] public DateTime? MeasureDate { get; set; }
-      [JsonProperty("Temperature")] public double? Temperature { get; set; }
-      [JsonProperty("Humidity")] public double? Humidity { get; set; }
-      [JsonProperty("Pressure")] public double? Pressure { get; set; }
-      [JsonProperty("DewPoint")] public double? DewPoint { get; set; }
-      [JsonProperty("SkyTemperature")] public double? SkyTemperature { get; set; }
-      [JsonProperty("CloudCoverage")] public double? CloudCoverage { get; set; }
-      [JsonProperty("SkyBrightness")] public double? SkyBrightness { get; set; }
-      [JsonProperty("SkyQuality")] public double? SkyQuality { get; set; }
-      [JsonProperty("IsSafe")] public bool? IsSafe { get; set; }
-      [JsonProperty("MoonAge")] public string? MoonAge { get; set; }
-      public override string ToString() => JsonConvert.SerializeObject(this);
-   }
+namespace AllSkyCameraConditionService.Model;
+[JsonObject("CurrentConditions")]
+internal class CurrentConditions {
+   [JsonProperty(nameof(MeasureDate))] public DateTime? MeasureDate { get; set; }
+   [JsonProperty(nameof(Temperature))] public double? Temperature { get; set; }
+   [JsonProperty(nameof(Humidity))] public double? Humidity { get; set; }
+   [JsonProperty(nameof(Pressure))] public double? Pressure { get; set; }
+   [JsonProperty(nameof(DewPoint))] public double? DewPoint { get; set; }
+   [JsonProperty(nameof(SkyTemperature))] public double? SkyTemperature { get; set; }
+   [JsonProperty(nameof(CloudCoverage))] public double? CloudCoverage { get; set; }
+   [JsonProperty(nameof(SkyBrightness))] public double? SkyBrightness { get; set; }
+   [JsonProperty(nameof(SkyQuality))] public double? SkyQuality { get; set; }
+   [JsonProperty(nameof(IsSafe))] public bool? IsSafe { get; set; }
+   [JsonProperty(nameof(MoonAge))] public string? MoonAge { get; set; }
+   public override string ToString() => JsonConvert.SerializeObject(this);
 }
