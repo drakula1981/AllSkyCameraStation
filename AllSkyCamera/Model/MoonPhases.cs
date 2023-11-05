@@ -10,7 +10,7 @@ internal static class Moon {
 
    private static readonly IReadOnlyList<string> SouthernHemisphere = NorthernHemisphere.Reverse().ToList();
 
-   private static readonly List<string> Names = new() {
+   private static readonly List<string> Names = [
              Phase.NewMoon,
              Phase.WaxingCrescent,
              Phase.FirstQuarter,
@@ -19,10 +19,10 @@ internal static class Moon {
              Phase.WaningGibbous,
              Phase.ThirdQuarter,
              Phase.WaningCrescent
-      };
+      ];
    private const double TotalLengthOfCycle = 29.53;
 
-   private static readonly List<Phase> allPhases = new();
+   private static readonly List<Phase> allPhases = [];
    static Moon() {
       var period = 30 / Names.Count;
       // divide the phases into equal parts 
@@ -71,18 +71,10 @@ internal static class Moon {
    public static PhaseResult Now(Earth.Hemispheres viewFromEarth = Earth.Hemispheres.Northern) => Calculate(DateTime.Now.ToUniversalTime(), viewFromEarth);
 
    [JsonObject("MoonPhase")]
-   public class PhaseResult {
-      public PhaseResult(string name, string emoji, double daysIntoCycle, Earth.Hemispheres hemisphere, DateTime moment) {
-         Name = name;
-         Emoji = emoji;
-         DaysIntoCycle = daysIntoCycle;
-         Hemisphere = hemisphere;
-         Moment = moment;
-      }
-
-      [JsonProperty("name")] public string Name { get; }
-      [JsonProperty("logo")] public string Emoji { get; set; }
-      [JsonIgnore] private double DaysIntoCycle { get; set; }
+   public class PhaseResult(string name, string emoji, double daysIntoCycle, Earth.Hemispheres hemisphere, DateTime moment) {
+      [JsonProperty("name")] public string Name { get; } = name;
+      [JsonProperty("logo")] public string Emoji { get; set; } = emoji;
+      [JsonIgnore] private double DaysIntoCycle { get; set; } = daysIntoCycle;
       [JsonProperty("age")]
       public string MoonAge {
          get {
@@ -90,8 +82,8 @@ internal static class Moon {
             return $"{moonAge.Days}j {moonAge.Hours}h {moonAge.Minutes}m";
          }
       }
-      [JsonIgnore] public Earth.Hemispheres Hemisphere { get; set; }
-      [JsonProperty("timeStamp")] public DateTime Moment { get; }
+      [JsonIgnore] public Earth.Hemispheres Hemisphere { get; set; } = hemisphere;
+      [JsonProperty("timeStamp")] public DateTime Moment { get; } = moment;
       [JsonProperty("visibility")]
       public double Visibility {
          get {
@@ -110,7 +102,7 @@ internal static class Moon {
       public override string ToString() => JsonConvert.SerializeObject(this);
    }
 
-   public class Phase {
+   public class Phase(string name, double start, double end) {
       public const string NewMoon = "Nouvelle lune";
       public const string WaxingCrescent = "Croissant montant";
       public const string FirstQuarter = "Premier quartier";
@@ -120,23 +112,17 @@ internal static class Moon {
       public const string ThirdQuarter = "Dernier quartier";
       public const string WaningCrescent = "Croissant descendant";
 
-      public Phase(string name, double start, double end) {
-         Name = name;
-         Start = start;
-         End = end;
-      }
-
-      public string Name { get; }
+      public string Name { get; } = name;
 
       /// <summary>
       /// The days into the cycle this phase starts
       /// </summary>
-      public double Start { get; }
+      public double Start { get; } = start;
 
       /// <summary>
       /// The days into the cycle this phase ends
       /// </summary>
-      public double End { get; }
+      public double End { get; } = end;
    }
    public static class Earth {
       public enum Hemispheres {

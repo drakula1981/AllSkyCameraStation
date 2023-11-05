@@ -11,7 +11,7 @@ public static class Moon {
 
    private static readonly IReadOnlyList<string> SouthernHemisphere = NorthernHemisphere.Reverse().ToList();
 
-   private static readonly List<string> Names = new() {
+   private static readonly List<string> Names = [
              Phase.NewMoon,
              Phase.WaxingCrescent,
              Phase.FirstQuarter,
@@ -20,10 +20,10 @@ public static class Moon {
              Phase.WaningGibbous,
              Phase.ThirdQuarter,
              Phase.WaningCrescent
-      };
+      ];
    private const double TotalLengthOfCycle = 29.53;
 
-   private static readonly List<Phase> allPhases = new();
+   private static readonly List<Phase> allPhases = [];
    static Moon() {
       var period = 30 / Names.Count;
       // divide the phases into equal parts 
@@ -111,7 +111,7 @@ public static class Moon {
       public override string ToString() => JsonConvert.SerializeObject(this);
    }
 
-   public class Phase {
+   public class Phase(string name, double start, double end) {
       public const string NewMoon = "Nouvelle lune";
       public const string WaxingCrescent = "Croissant montant";
       public const string FirstQuarter = "Premier quartier";
@@ -121,23 +121,17 @@ public static class Moon {
       public const string ThirdQuarter = "Dernier quartier";
       public const string WaningCrescent = "Croissant descendant";
 
-      public Phase(string name, double start, double end) {
-         Name = name;
-         Start = start;
-         End = end;
-      }
-
-      public string Name { get; }
+      public string Name { get; } = name;
 
       /// <summary>
       /// The days into the cycle this phase starts
       /// </summary>
-      public double Start { get; }
+      public double Start { get; } = start;
 
       /// <summary>
       /// The days into the cycle this phase ends
       /// </summary>
-      public double End { get; }
+      public double End { get; } = end;
    }
    public static class Earth {
       public enum Hemispheres {

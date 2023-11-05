@@ -27,8 +27,6 @@ public class CloudCoverture : EntityBase {
          {12, 33}
       };
 
-   private const double K1_HighTemp = 80;
-
    private const double K2 = 0;
    private const double K3 = 4;
    private const double K4 = 100;
